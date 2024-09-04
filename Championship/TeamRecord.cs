@@ -12,7 +12,6 @@ public class TeamRecord
     public int FondationYear { get; }
     public string City { get; }
     public string ColorOfClub { get; }
-
     public string StadiumName { get; }
 
 
