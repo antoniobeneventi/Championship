@@ -25,11 +25,19 @@ class Program
         }
         league.ShowTeams();
 
-        CalendarGenerator generator = new CalendarGenerator();
-        Calendar leagueCalendar = generator.GenerateCalendar(predefinedTeams);
+        // calendar without results
+        CalendarGenerator calendarGenerator = new CalendarGenerator();
+        Calendar calendarWithoutResults = calendarGenerator.GenerateCalendar(predefinedTeams);
+        Console.WriteLine("\nCalendar without Results:");
+        calendarWithoutResults.ShowCalendar();
 
-        leagueCalendar.ShowCalendar();
+        // calendar with results
+        GenerateCalendarWithResult calendarWithResultGenerator = new GenerateCalendarWithResult();
+        Calendar calendarWithResults = calendarWithResultGenerator.GenerateCalendarWithScores(predefinedTeams);
+        Console.WriteLine("\nCalendar with Results:");
+        calendarWithResults.ShowCalendar();
 
     }
+    
 }
 

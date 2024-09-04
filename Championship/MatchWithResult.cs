@@ -1,18 +1,19 @@
-﻿
+﻿namespace Championship;
 
-namespace Championship;
-
-public class MatchWithResult
+public class MatchWithResult : Match
 {
     public int HomeTeamScore { get; }
     public int AwayTeamScore { get; }
-    public MatchWithResult(int homeTeamScore, int awayTeamScore)
+
+    public MatchWithResult(TeamRecord homeTeam, TeamRecord awayTeam, DateTime matchDate, int homeTeamScore, int awayTeamScore, string stadiumName, string city)
+        : base(homeTeam, awayTeam, matchDate, stadiumName, city)
     {
         HomeTeamScore = homeTeamScore;
         AwayTeamScore = awayTeamScore;
     }
+
     public override string ToString()
     {
-        return $" Score: {HomeTeamScore}-{AwayTeamScore}";
+        return $"{HomeTeam.SquadName} vs {AwayTeam.SquadName} - Date: {MatchDate.ToShortDateString()}, Score: {HomeTeamScore}-{AwayTeamScore}, Stadium: {StadiumName}, City: {City}";
     }
 }

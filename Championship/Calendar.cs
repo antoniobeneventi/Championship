@@ -2,27 +2,27 @@
 
 public class Calendar
 {
-    private List<Matchday> Matchdays { get;}
+    private readonly List<Matchday> _matchdays;
 
     public Calendar()
     {
-        Matchdays = new List<Matchday>();
+        _matchdays = new List<Matchday>();
     }
 
-    public void AddMatchday(Matchday matchday)
-    {
-        Matchdays.Add(matchday);
-    }
+    public IReadOnlyList<Matchday> Matchdays => _matchdays.AsReadOnly();
 
     public void ShowCalendar()
     {
-        Console.WriteLine("League Calendar:");
-        foreach (var matchday in Matchdays)
+        
+        foreach (var matchday in _matchdays)
         {
             Console.WriteLine(matchday.ToString());
-            Console.WriteLine(); 
+            Console.WriteLine();
         }
     }
+
+    internal void AddMatchday(Matchday matchday)
+    {
+        _matchdays.Add(matchday);
+    }
 }
-
-

@@ -1,36 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Championship;
+﻿namespace Championship;
 
 public class Matchday
 {
     public int MatchdayNumber { get; }
-    private List<Match> Matches { get; }
+    private readonly List<Match> _matches;
 
     public Matchday(int matchdayNumber)
     {
         MatchdayNumber = matchdayNumber;
-        Matches = new List<Match>();
+        _matches = new List<Match>();
     }
+
+    public IReadOnlyList<Match> Matches => _matches.AsReadOnly();
 
     public void AddMatch(Match match)
     {
-        Matches.Add(match);
-    }
-    public bool IsStadiumUsed(string stadiumName)
-    {
-        return Matches.Any(m => m.StadiumName == stadiumName);
+        _matches.Add(match);
     }
 
+    public bool IsStadiumUsed(string stadiumName)
+    {
+        return _matches.Any(m => m.StadiumName == stadiumName);
+    }
 
     public override string ToString()
     {
-        var matchesInfo = string.Join("\n", Matches.Select(m => m.ToString()));
-        return $"Matchday {MatchdayNumber}:\n{matchesInfo}";
+        var matchesInfo = string.Join("\n", _matches.Select(m => m.ToString()));
+        return $"MatchDay {MatchdayNumber}:\n{matchesInfo}";
     }
 }
+
+
+
+
+
+
 
