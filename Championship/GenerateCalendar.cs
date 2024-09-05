@@ -15,7 +15,7 @@ public class CalendarGenerator
         Calendar calendar = new Calendar();
         DateTime currentDate = DateTime.Now;
 
-        // giornate d'andata
+        // Girone d'andata
         for (int i = 0; i < numMatchdays; i++)
         {
             Matchday matchday = new Matchday(i + 1);
@@ -27,21 +27,22 @@ public class CalendarGenerator
                 if (i % 2 == 0)
                 {
                     stadiumName = homeTeam.StadiumName;
-                    matchday.AddMatch(new Match(homeTeam, awayTeam, currentDate.AddDays(i * 7), stadiumName, awayTeam.City));
+                    matchday.AddMatch(new Match(homeTeam, awayTeam, currentDate.AddDays(i * 7), stadiumName, homeTeam.City));
                 }
                 else
                 {
                     stadiumName = awayTeam.StadiumName;
-                    matchday.AddMatch(new Match(awayTeam, homeTeam, currentDate.AddDays(i * 7), stadiumName, homeTeam.City));
+                    matchday.AddMatch(new Match(awayTeam, homeTeam, currentDate.AddDays(i * 7), stadiumName, awayTeam.City));
                 }
             }
+           
             Team lastTeam = teams[numTeams - 1];
             teams.RemoveAt(numTeams - 1);
             teams.Insert(1, lastTeam);
             calendar.AddMatchday(matchday);
         }
 
-        // giornate di ritorno
+        // girone di ritorno
         for (int i = 0; i < numMatchdays; i++)
         {
             Matchday matchday = new Matchday(numMatchdays + i + 1);
@@ -53,14 +54,15 @@ public class CalendarGenerator
                 if (i % 2 == 0)
                 {
                     stadiumName = awayTeam.StadiumName;
-                    matchday.AddMatch(new Match(awayTeam, homeTeam, currentDate.AddDays((numMatchdays + i) * 7), stadiumName, homeTeam.City));
+                    matchday.AddMatch(new Match(awayTeam, homeTeam, currentDate.AddDays((numMatchdays + i) * 7), stadiumName, awayTeam.City));
                 }
                 else
                 {
                     stadiumName = homeTeam.StadiumName;
-                    matchday.AddMatch(new Match(homeTeam, awayTeam, currentDate.AddDays((numMatchdays + i) * 7), stadiumName, awayTeam.City));
+                    matchday.AddMatch(new Match(homeTeam, awayTeam, currentDate.AddDays((numMatchdays + i) * 7), stadiumName, homeTeam.City));
                 }
             }
+            
             Team lastTeam = teams[numTeams - 1];
             teams.RemoveAt(numTeams - 1);
             teams.Insert(1, lastTeam);
@@ -69,8 +71,6 @@ public class CalendarGenerator
         return calendar;
     }
 }
-
-
 
 
 

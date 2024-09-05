@@ -7,9 +7,11 @@ public class TeamStats
     public int Losses { get; }
     public int GoalsFor { get; }
     public int GoalsAgainst { get; }
+    public int Points { get; }
 
+    public int GamesPlayed { get; }
 
-    public TeamStats(int wins, int draws, int losses, int goalsFor, int goalsAgainst)
+    public TeamStats(int wins, int draws, int losses, int goalsFor, int goalsAgainst, int points, int gamesPlayed)
     {
         // Controlla che il numero di vittorie, pareggi e sconfitte non siano negativi
         if (wins < 0)
@@ -41,16 +43,30 @@ public class TeamStats
             throw new ArgumentOutOfRangeException("The sum of wins, draws and losses cannot be negative.");
         }
 
+        //controlla che i punti non siano negativi
+        if (points < 0)
+        {
+            throw new ArgumentOutOfRangeException("The points cannot be negative");
+
+        }
+        //controlla che le partite giocate non siano negative
+        if(GamesPlayed < 0)
+        {
+            throw new ArgumentOutOfRangeException("Game played cannot be negative");
+        }
+
         Wins = wins;
         Draws = draws;
         Losses = losses;
         GoalsFor = goalsFor;
         GoalsAgainst = goalsAgainst;
+        Points = (wins * 3) + (draws * 1);
+        GamesPlayed = gamesPlayed;
     }
 
     public override string ToString()
     {
-        return $"Stats - Wins: {Wins}, Draws: {Draws}, Losses: {Losses}, Goals For: {GoalsFor}, Goals Against: {GoalsAgainst}";
+        return $"Games Played:{GamesPlayed}, Points: {Points},Wins: {Wins}, Draws: {Draws}, Losses: {Losses}, Goals For: {GoalsFor}, Goals Against: {GoalsAgainst}, Goal difference: {GoalsFor - GoalsAgainst}";
     }
 }
 

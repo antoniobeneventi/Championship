@@ -18,7 +18,8 @@ class Program
         {
             league.AddTeam(team);
         }
-        league.ShowTeams();
+        Console.WriteLine(league.ToString());
+
 
 
         CalendarGenerator calendarGenerator = new CalendarGenerator();
@@ -62,6 +63,18 @@ class Program
         // Visualizza il calendario con i risultati
         Console.WriteLine("\nCalendar with results:");
         Console.WriteLine(calendarWithoutResults);
+
+        //Console.WriteLine("\n insert the number of matchday for view the standings");
+        //int matchdayInput = int.Parse(Console.ReadLine());
+
+        LeagueStandingsGenerator standingsGenerator = new LeagueStandingsGenerator();
+        LeagueStandings finalStandings = standingsGenerator.GenerateStandings(calendarWithoutResults, predefinedTeams /*matchdayInput*/);
+
+        // Visualizza la classifica
+        foreach (var standing in finalStandings.Standings)
+        {
+            Console.WriteLine(standing);
+        }
     }
 }
 

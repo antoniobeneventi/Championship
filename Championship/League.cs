@@ -1,5 +1,4 @@
 ﻿namespace Championship;
-
 public class League
 {
     private List<Team> Teams { get; }
@@ -10,19 +9,15 @@ public class League
         Teams = new List<Team>();
 
     }
-
     public void AddTeam(Team team)
     {
         Teams.Add(team);
     }
 
-    public void ShowTeams()
+    public override string ToString()
     {
-        Console.WriteLine("Teams partecipating in the league:");
-        foreach (var team in Teams)
-        {
-            Console.WriteLine(team.ToString());
-        }
+        var teamsInfo = string.Join("\n", Teams.Select(t => t.ToString()));
+        return $"Teams participating in the league:\n{teamsInfo}";
     }
 
 

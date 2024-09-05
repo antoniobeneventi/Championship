@@ -15,7 +15,7 @@ public class Team
     public string StadiumName { get; }
 
 
-    public Team(string squadName, int fondationYear, string city, string colorOfClub, string stadiumName)
+     public Team(string squadName, int fondationYear, string city, string colorOfClub, string stadiumName)
     {
         if (string.IsNullOrWhiteSpace(squadName)) // controllo su SquadName
         {
