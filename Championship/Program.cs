@@ -4,14 +4,14 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Crea una nuova lega e aggiungi 4 squadre
+
         League league = new League();
-        var predefinedTeams = new List<TeamRecord>
+        var predefinedTeams = new List<Team>
         {
-            new TeamRecord("Juventus", 1897, "Turin", "Black and White", "Allianz Stadium"),
-            new TeamRecord("Milan", 1899, "Milan", "Red and Black", "San Siro"),
-            new TeamRecord("Roma", 1927, "Rome", "Red and Yellow", "Stadio Olimpico"),
-            new TeamRecord("Napoli", 1926, "Naples", "Blue and White", "Stadio Diego Armando Maradona"),
+            new Team("Juventus", 1897, "Turin", "Black and White", "Allianz Stadium"),
+            new Team("Milan", 1899, "Milan", "Red and Black", "San Siro"),
+            new Team("Roma", 1927, "Rome", "Red and Yellow", "Stadio Olimpico"),
+            new Team("Napoli", 1926, "Naples", "Blue and White", "Stadio Diego Armando Maradona"),
         };
 
         foreach (var team in predefinedTeams)
@@ -20,11 +20,12 @@ class Program
         }
         league.ShowTeams();
 
-        // Crea un generatore di calendario e genera il calendario senza risultati
+
         CalendarGenerator calendarGenerator = new CalendarGenerator();
         Calendar calendarWithoutResults = calendarGenerator.GenerateCalendar(predefinedTeams);
+        // Visualizza il calendario senza risultati
         Console.WriteLine("\nCalendar without results:");
-        calendarWithoutResults.ShowCalendar();
+        Console.WriteLine(calendarWithoutResults);
 
         // Imposta i risultati per tutte le partite nel calendario
         var predefinedResults = new List<(string HomeTeam, string AwayTeam, MatchResult Result)>
@@ -35,12 +36,13 @@ class Program
             ("Milan", "Napoli", new MatchResult(0, 2)),
             ("Juventus", "Milan", new MatchResult(1, 2)),
             ("Roma","Napoli", new MatchResult(2, 2)),
-            ("Napoli","Juventus", new MatchResult(1, 1)), // Ritorno
-            ("Roma", "Milan", new MatchResult(0, 1)), // Ritorno
-            ("Juventus","Roma", new MatchResult(2, 1)), // Ritorno
-            ("Napoli", "Milan", new MatchResult(1, 0)), // Ritorno
-            ("Milan", "Juventus", new MatchResult(0, 0)), // Ritorno
-            ("Napoli", "Roma", new MatchResult(2, 1))  // Ritorno
+            //ritorno
+            ("Napoli","Juventus", new MatchResult(1, 1)),
+            ("Roma", "Milan", new MatchResult(0, 1)),
+            ("Juventus","Roma", new MatchResult(2, 1)),
+            ("Napoli", "Milan", new MatchResult(1, 0)),
+            ("Milan", "Juventus", new MatchResult(0, 0)),
+            ("Napoli", "Roma", new MatchResult(2, 1))
         };
 
         int resultIndex = 0;
@@ -57,10 +59,9 @@ class Program
                 }
             }
         }
-
         // Visualizza il calendario con i risultati
         Console.WriteLine("\nCalendar with results:");
-        calendarWithoutResults.ShowCalendar();
+        Console.WriteLine(calendarWithoutResults);
     }
 }
 

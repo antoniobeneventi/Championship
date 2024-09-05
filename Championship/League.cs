@@ -2,16 +2,16 @@
 
 public class League
 {
-    private List<TeamRecord> Teams { get; }
+    private List<Team> Teams { get; }
 
 
     public League()
     {
-        Teams = new List<TeamRecord>();
+        Teams = new List<Team>();
 
     }
 
-    public void AddTeam(TeamRecord team)
+    public void AddTeam(Team team)
     {
         Teams.Add(team);
     }

@@ -8,7 +8,7 @@ namespace Championship;
 
 public class CalendarGenerator
 {
-    public Calendar GenerateCalendar(List<TeamRecord> teams)
+    public Calendar GenerateCalendar(List<Team> teams)
     {
         int numTeams = teams.Count;
         int numMatchdays = numTeams - 1;
@@ -21,8 +21,8 @@ public class CalendarGenerator
             Matchday matchday = new Matchday(i + 1);
             for (int j = 0; j < numTeams / 2; j++)
             {
-                TeamRecord homeTeam = teams[j];
-                TeamRecord awayTeam = teams[numTeams - 1 - j];
+                Team homeTeam = teams[j];
+                Team awayTeam = teams[numTeams - 1 - j];
                 string stadiumName;
                 if (i % 2 == 0)
                 {
@@ -35,7 +35,7 @@ public class CalendarGenerator
                     matchday.AddMatch(new Match(awayTeam, homeTeam, currentDate.AddDays(i * 7), stadiumName, homeTeam.City));
                 }
             }
-            TeamRecord lastTeam = teams[numTeams - 1];
+            Team lastTeam = teams[numTeams - 1];
             teams.RemoveAt(numTeams - 1);
             teams.Insert(1, lastTeam);
             calendar.AddMatchday(matchday);
@@ -47,8 +47,8 @@ public class CalendarGenerator
             Matchday matchday = new Matchday(numMatchdays + i + 1);
             for (int j = 0; j < numTeams / 2; j++)
             {
-                TeamRecord homeTeam = teams[j];
-                TeamRecord awayTeam = teams[numTeams - 1 - j];
+                Team homeTeam = teams[j];
+                Team awayTeam = teams[numTeams - 1 - j];
                 string stadiumName;
                 if (i % 2 == 0)
                 {
@@ -61,7 +61,7 @@ public class CalendarGenerator
                     matchday.AddMatch(new Match(homeTeam, awayTeam, currentDate.AddDays((numMatchdays + i) * 7), stadiumName, awayTeam.City));
                 }
             }
-            TeamRecord lastTeam = teams[numTeams - 1];
+            Team lastTeam = teams[numTeams - 1];
             teams.RemoveAt(numTeams - 1);
             teams.Insert(1, lastTeam);
             calendar.AddMatchday(matchday);
