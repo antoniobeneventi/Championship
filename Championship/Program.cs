@@ -64,15 +64,20 @@ class Program
         Console.WriteLine("\nCalendar with results:");
         Console.WriteLine(calendarWithoutResults);
 
-        // Genera la classifica dopo l'ultima giornata
-        var standingsAtMatchday = LeagueStanding.GenerateStandings(calendarWithoutResults, predefinedTeams);
 
-        // Visualizza la classifica
-        Console.WriteLine("\nClassifica finale:");
-        foreach (var standing in standingsAtMatchday)
+        // Genera la classifica nel range richiesto
+        var standingsFromTo = LeagueStanding.GenerateStandings(calendarWithoutResults,  null, null);
+      
+      
+
+        // Visualizza le classifiche
+        Console.WriteLine("\nRanking in the required range:");
+        foreach (var standing in standingsFromTo)
         {
             Console.WriteLine(standing);
         }
+
+        
     }
 }
 

@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Championship;
+﻿using Championship;
 
 public class LeagueStanding
 {
@@ -28,20 +16,45 @@ public class LeagueStanding
         return $"{Team.SquadName} - {Stats}";
     }
 
-    // Metodo statico per generare la classifica
-    public static List<LeagueStanding> GenerateStandings(Calendar calendar, List<Team> teams)
+    // Metodo per generare la classifica per un intervallo di giornate
+    public static List<LeagueStanding> GenerateStandings(Calendar calendar, int? from, int? to)
     {
-        var standingsDictionary = new Dictionary<string, TeamStats>();
+        if (from.HasValue && to.HasValue && from > to)
+        {
+            throw new ArgumentException("From cannot be greater than to.");
+        }
 
+        
+        var standingsDictionary = new Dictionary<string, TeamStats>();
+        var teams = new HashSet<Team>();
+
+        foreach (var matchday in calendar.Matchdays)
+        {
+            foreach (var match in matchday.Matches)
+            {
+                teams.Add(match.HomeTeam);
+                teams.Add(match.AwayTeam);
+            }
+        }
         // Inizializza le statistiche delle squadre
         foreach (var team in teams)
         {
             standingsDictionary[team.SquadName] = new TeamStats(0, 0, 0, 0, 0, 0, 0);
         }
 
-        // Itera attraverso le giornate (matchdays) e aggiorna le statistiche delle squadre
+        // Determina l'intervallo di giornate
+        int startMatchday = from ?? 1;
+        int endMatchday = to ?? calendar.Matchdays.Count;
+
+        if (startMatchday < 1 || endMatchday > calendar.Matchdays.Count)
+        {
+            throw new ArgumentOutOfRangeException("The matchday range is out of bounds.");
+        }
+
+        // Itera attraverso le giornate specificate e aggiorna le statistiche delle squadre
         foreach (var matchday in calendar.Matchdays)
         {
+           
             foreach (var match in matchday.Matches)
             {
                 if (match.Result != null)
@@ -141,4 +154,5 @@ public class LeagueStanding
         return standings;
     }
 }
+
 
