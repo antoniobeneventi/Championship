@@ -24,6 +24,15 @@ public class Calendar
         {
             throw new DuplicateMatchdayException($"A matchday with number {matchday.MatchdayNumber} already exists.");
         }
+        // Controllo se le giornate sono inserite in ordine
+        if (_matchdays.Count > 0)
+        {
+            var lastMatchdayNumber = _matchdays.Max(md => md.MatchdayNumber);
+            if (matchday.MatchdayNumber != lastMatchdayNumber + 1)
+            {
+                throw new InvalidOperationException($"Matchday number must be {lastMatchdayNumber + 1}. The previous matchday has not been added.");
+            }
+        }
 
         _matchdays.Add(matchday);
 

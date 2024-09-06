@@ -4,7 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-
+        // Crea una nuova lega e aggiunge 4 squadre
         League league = new League();
         var predefinedTeams = new List<Team>
         {
@@ -18,13 +18,12 @@ class Program
         {
             league.AddTeam(team);
         }
+
         Console.WriteLine(league.ToString());
 
-
-
+        // Crea un generatore di calendario e genera il calendario senza risultati
         CalendarGenerator calendarGenerator = new CalendarGenerator();
         Calendar calendarWithoutResults = calendarGenerator.GenerateCalendar(predefinedTeams);
-        // Visualizza il calendario senza risultati
         Console.WriteLine("\nCalendar without results:");
         Console.WriteLine(calendarWithoutResults);
 
@@ -33,14 +32,14 @@ class Program
         {
             ("Juventus", "Napoli", new MatchResult(2, 1)),
             ("Milan", "Roma", new MatchResult(1, 1)),
-            ( "Roma","Juventus" ,new MatchResult(3, 0)),
+            ("Roma", "Juventus", new MatchResult(3, 0)),
             ("Milan", "Napoli", new MatchResult(0, 2)),
             ("Juventus", "Milan", new MatchResult(1, 2)),
-            ("Roma","Napoli", new MatchResult(2, 2)),
+            ("Roma", "Napoli", new MatchResult(2, 2)),
             //ritorno
-            ("Napoli","Juventus", new MatchResult(1, 1)),
+            ("Napoli", "Juventus", new MatchResult(1, 1)),
             ("Roma", "Milan", new MatchResult(0, 1)),
-            ("Juventus","Roma", new MatchResult(2, 1)),
+            ("Juventus", "Roma", new MatchResult(2, 1)),
             ("Napoli", "Milan", new MatchResult(1, 0)),
             ("Milan", "Juventus", new MatchResult(0, 0)),
             ("Napoli", "Roma", new MatchResult(2, 1))
@@ -60,18 +59,17 @@ class Program
                 }
             }
         }
+
         // Visualizza il calendario con i risultati
         Console.WriteLine("\nCalendar with results:");
         Console.WriteLine(calendarWithoutResults);
 
-        //Console.WriteLine("\n insert the number of matchday for view the standings");
-        //int matchdayInput = int.Parse(Console.ReadLine());
-
-        LeagueStandingsGenerator standingsGenerator = new LeagueStandingsGenerator();
-        LeagueStandings finalStandings = standingsGenerator.GenerateStandings(calendarWithoutResults, predefinedTeams /*matchdayInput*/);
+        // Genera la classifica dopo l'ultima giornata
+        var standingsAtMatchday = LeagueStanding.GenerateStandings(calendarWithoutResults, predefinedTeams);
 
         // Visualizza la classifica
-        foreach (var standing in finalStandings.Standings)
+        Console.WriteLine("\nClassifica finale:");
+        foreach (var standing in standingsAtMatchday)
         {
             Console.WriteLine(standing);
         }

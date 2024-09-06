@@ -1,14 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Championship;
-public class LeagueStandingsGenerator
+
+public class LeagueStanding
 {
-    public LeagueStandings GenerateStandings(Calendar calendar, List<Team> teams /*int maxMatchDay*/)
+    public Team Team { get; }
+    public TeamStats Stats { get; }
+
+    public LeagueStanding(Team team, TeamStats stats)
+    {
+        Team = team ?? throw new ArgumentNullException(nameof(team), "Team cannot be null");
+        Stats = stats ?? throw new ArgumentNullException(nameof(stats), "Stats cannot be null");
+    }
+
+    public override string ToString()
+    {
+        return $"{Team.SquadName} - {Stats}";
+    }
+
+    // Metodo statico per generare la classifica
+    public static List<LeagueStanding> GenerateStandings(Calendar calendar, List<Team> teams)
     {
         var standingsDictionary = new Dictionary<string, TeamStats>();
 
@@ -18,11 +39,9 @@ public class LeagueStandingsGenerator
             standingsDictionary[team.SquadName] = new TeamStats(0, 0, 0, 0, 0, 0, 0);
         }
 
-        // Itera attraverso i matchdays e aggiorna le statistiche delle squadre
+        // Itera attraverso le giornate (matchdays) e aggiorna le statistiche delle squadre
         foreach (var matchday in calendar.Matchdays)
         {
-            //if (matchday.MatchdayNumber > maxMatchDay)
-            //    break;
             foreach (var match in matchday.Matches)
             {
                 if (match.Result != null)
@@ -104,19 +123,22 @@ public class LeagueStandingsGenerator
             }
         }
 
-        // Crea l'elenco finale di TeamStanding
+        // Crea e ordina l'elenco finale di LeagueStanding
         var standings = standingsDictionary
-            .Select(kvp => new TeamStanding(
+            .Select(kvp => new LeagueStanding(
                 teams.First(t => t.SquadName == kvp.Key),
                 kvp.Value
             ))
+            .OrderByDescending(ts => ts.Stats.Points)
+            .ThenByDescending(ts => ts.Stats.GoalsFor - ts.Stats.GoalsAgainst)
+            .ThenByDescending(ts => ts.Stats.Wins)
+            .ThenByDescending(ts => ts.Stats.Draws)
+            .ThenByDescending(ts => ts.Stats.Losses)
+            .ThenByDescending(ts => ts.Stats.GoalsFor)
+            .ThenByDescending(ts => ts.Stats.GoalsAgainst)
             .ToList();
 
-        // Ordina la classifica
-        var leagueStandings = new LeagueStandings(standings);
-        leagueStandings.SortStandings();
-
-        return leagueStandings;
+        return standings;
     }
 }
 

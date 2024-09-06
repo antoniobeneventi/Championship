@@ -22,4 +22,3 @@ public class TeamStanding
         return $"{Team.SquadName} - {Stats}";
     }
 }
-
