@@ -4,6 +4,15 @@ class Program
 {
     static void Main(string[] args)
     {
+        string databasePath = "football_league.db"; // Specifica il percorso del database
+        DatabaseManager dbManager = new DatabaseManager(databasePath);
+
+        
+        dbManager.CreateTables();
+
+        dbManager.InsertData();
+
+
         // Crea una nuova lega e aggiunge 4 squadre
         League league = new League();
         var predefinedTeams = new List<Team>
@@ -66,9 +75,9 @@ class Program
 
 
         // Genera la classifica nel range richiesto
-        var standingsFromTo = LeagueStanding.GenerateStandings(calendarWithoutResults,  null, null);
-      
-      
+        var standingsFromTo = LeagueStanding.GenerateStandings(calendarWithoutResults, null, null);
+
+
 
         // Visualizza le classifiche
         Console.WriteLine("\nRanking in the required range:");
@@ -77,7 +86,7 @@ class Program
             Console.WriteLine(standing);
         }
 
-        
+
     }
 }
 

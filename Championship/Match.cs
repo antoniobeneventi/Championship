@@ -61,7 +61,7 @@ public class Match
 
     public override int GetHashCode()
     {
-        // Usa la somma degli hash di HomeTeam e AwayTeam, rendendo l'ordine delle squadre irrilevante
+        
         int homeTeamHash = HomeTeam.GetHashCode();
         int awayTeamHash = AwayTeam.GetHashCode();
         return homeTeamHash + awayTeamHash;
