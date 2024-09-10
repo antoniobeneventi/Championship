@@ -1,0 +1,61 @@
+SELECT *
+FROM Teams;
+
+SELECT *
+FROM Matches;
+
+SELECT *
+FROM MatchResults;
+
+ 
+WITH TeamScores AS (
+    SELECT 
+        t1.SquadName AS TeamName,
+        --Calcolo dei punti per ogni squadra
+        SUM(CASE 
+            WHEN mr.HomeTeamScore > mr.AwayTeamScore AND m.HomeTeamName = t1.SquadName THEN 3 
+            WHEN mr.HomeTeamScore < mr.AwayTeamScore AND m.AwayTeamName = t1.SquadName THEN 3
+            WHEN mr.HomeTeamScore = mr.AwayTeamScore THEN 1
+            ELSE 0
+        END) AS Points,
+        --Calcolo di GoalsFor e GoalsAgainst:
+        SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.HomeTeamScore ELSE mr.AwayTeamScore END) AS GoalsFor,
+        SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.AwayTeamScore ELSE mr.HomeTeamScore END) AS GoalsAgainst,
+        --Calcolo Vittorie, Pareggi e Sconfitte:
+        SUM(CASE 
+            WHEN mr.HomeTeamScore > mr.AwayTeamScore AND m.HomeTeamName = t1.SquadName THEN 1
+            WHEN mr.HomeTeamScore < mr.AwayTeamScore AND m.AwayTeamName = t1.SquadName THEN 1
+            ELSE 0
+        END) AS Wins,
+        SUM(CASE 
+            WHEN mr.HomeTeamScore = mr.AwayTeamScore THEN 1
+            ELSE 0
+        END) AS Draws,
+        SUM(CASE 
+            WHEN mr.HomeTeamScore < mr.AwayTeamScore AND m.HomeTeamName = t1.SquadName THEN 1
+            WHEN mr.HomeTeamScore > mr.AwayTeamScore AND m.AwayTeamName = t1.SquadName THEN 1
+            ELSE 0
+        END) AS Losses,
+        COUNT(m.MatchID) AS GamesPlayed  
+   FROM 
+        Teams t1
+    LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
+    LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
+     WHERE 
+        m.MatchdayID BETWEEN 1 AND 6
+    GROUP BY t1.SquadName
+)
+SELECT 
+    TeamName,
+    GamesPlayed,
+    Points,
+    Wins,
+    Draws,
+    Losses,
+    GoalsFor,
+    GoalsAgainst,
+    (GoalsFor - GoalsAgainst) AS GoalDifference
+FROM 
+    TeamScores
+ORDER BY 
+    Points DESC, GoalDifference DESC, GoalsFor DESC;
