@@ -7,7 +7,94 @@ FROM Matches;
 SELECT *
 FROM MatchResults;
 
- 
+ --Ottenere tutte le partite giocate da una squadra specifica 
+SELECT 
+    m.MatchID,
+    m.MatchdayID,
+    m.HomeTeamName,
+    m.AwayTeamName,
+    mr.HomeTeamScore,
+    mr.AwayTeamScore
+FROM 
+    Matches m
+JOIN 
+    MatchResults mr ON m.MatchID = mr.MatchID
+WHERE 
+    m.HomeTeamName = 'Juventus' OR m.AwayTeamName = 'Juventus';
+
+--Visualizzare i risultati delle partite per una giornata specifica
+SELECT 
+    m.MatchID,
+    m.HomeTeamName,
+    m.AwayTeamName,
+    mr.HomeTeamScore,
+    mr.AwayTeamScore
+FROM 
+    Matches m
+JOIN 
+    MatchResults mr ON m.MatchID = mr.MatchID
+WHERE 
+    m.MatchdayID = 6;
+   
+-- Visualizzare le squadre con il miglior attacco 
+
+   SELECT 
+    t1.SquadName AS TeamName,
+    SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.HomeTeamScore ELSE mr.AwayTeamScore END) AS GoalsFor
+FROM 
+    Teams t1
+LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
+LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
+GROUP BY t1.SquadName
+ORDER BY GoalsFor DESC;
+
+-- Visualizzare le squadre con la miglior difesa
+SELECT 
+    t1.SquadName AS TeamName,
+    SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.AwayTeamScore ELSE mr.HomeTeamScore END) AS GoalsAgainst
+FROM 
+    Teams t1
+LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
+LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
+GROUP BY t1.SquadName
+ORDER BY GoalsAgainst ASC;
+
+--Visualizzare le partite con il maggior numero di gol segnati
+SELECT 
+    m.MatchID,
+    m.HomeTeamName,
+    m.AwayTeamName,
+    mr.HomeTeamScore,
+    mr.AwayTeamScore,
+    (mr.HomeTeamScore + mr.AwayTeamScore) AS TotalGoals
+FROM 
+    Matches m
+JOIN 
+    MatchResults mr ON m.MatchID = mr.MatchID
+ORDER BY TotalGoals DESC;
+
+--Visualizzare le squadre con la miglior differenza reti
+WITH TeamStats AS (
+    SELECT 
+        t1.SquadName AS TeamName,
+        SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.HomeTeamScore ELSE mr.AwayTeamScore END) AS GoalsFor,
+        SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.AwayTeamScore ELSE mr.HomeTeamScore END) AS GoalsAgainst
+    FROM 
+        Teams t1
+    LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
+    LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
+    GROUP BY t1.SquadName
+)
+SELECT 
+    TeamName,
+    (GoalsFor - GoalsAgainst) AS GoalDifference
+FROM 
+    TeamStats
+ORDER BY GoalDifference DESC;
+
+
+   
+--Ottenere la classifica della lega, ordinata per punti e differenza reti, per un range di giornate specifico
 WITH TeamScores AS (
     SELECT 
         t1.SquadName AS TeamName,
@@ -38,7 +125,7 @@ WITH TeamScores AS (
     LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
     LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
      WHERE 
-        m.MatchdayID BETWEEN 4 AND 6
+        m.MatchdayID BETWEEN 6 AND 6
     GROUP BY t1.SquadName
 )
 SELECT 
@@ -57,3 +144,6 @@ FROM
 ORDER BY 
     Points DESC, GoalDifference DESC, GoalsFor DESC;
 
+
+
+   

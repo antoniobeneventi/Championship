@@ -86,11 +86,11 @@ class Program
             Console.WriteLine(standing);
         }
 
-        var standings = dbManager.GetStandingsForMatchdayRange(1, 6);
+        var standings = dbManager.GetStandingsForMatchdayRange(3, 5);
         Console.WriteLine("\nRanking in the required range:");
         foreach (var standing in standings)
         {
-            Console.WriteLine($"\nTeam: {standing.SquadName}, Points: {standing.Points}, Wins: {standing.Wins}, Draws: {standing.Draws}, Losses: {standing.Losses}, Goal Difference: {standing.GoalDifference}");
+            Console.WriteLine($"\nTeam: {standing.SquadName}, Games Played: {standing.GamesPlayed} ,Points: {standing.Points}, Wins: {standing.Wins}, Draws: {standing.Draws}, Losses: {standing.Losses}, Goal Difference: {standing.GoalDifference}");
         }
 
     }
