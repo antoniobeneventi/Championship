@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using Championship;
+using System.Data.SQLite;
 
 
 public class DatabaseManager
@@ -119,6 +120,81 @@ public class DatabaseManager
 
         using SQLiteCommand command3 = new SQLiteCommand(insertMatchResults, connection);
         command3.ExecuteNonQuery();
+    }
+    
+    public List<TeamStanding> GetStandingsForMatchdayRange(int fromMatchday, int toMatchday)
+    {
+        List<TeamStanding> standings = new List<TeamStanding>();
+
+        using var connection = OpenConnection();
+
+        string query = @"
+    WITH TeamScores AS (
+        SELECT 
+            t1.SquadName AS TeamName,
+            SUM(CASE 
+                WHEN (mr.HomeTeamScore > mr.AwayTeamScore AND m.HomeTeamName = t1.SquadName) OR 
+                     (mr.HomeTeamScore < mr.AwayTeamScore AND m.AwayTeamName = t1.SquadName) THEN 1
+                ELSE 0
+            END) AS Wins,
+            SUM(CASE 
+                WHEN mr.HomeTeamScore = mr.AwayTeamScore THEN 1
+                ELSE 0
+            END) AS Draws,
+            SUM(CASE 
+                WHEN (mr.HomeTeamScore < mr.AwayTeamScore AND m.HomeTeamName = t1.SquadName) OR 
+                     (mr.HomeTeamScore > mr.AwayTeamScore AND m.AwayTeamName = t1.SquadName) THEN 1
+                ELSE 0
+            END) AS Losses,
+            SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.HomeTeamScore ELSE mr.AwayTeamScore END) AS GoalsFor,
+            SUM(CASE WHEN m.HomeTeamName = t1.SquadName THEN mr.AwayTeamScore ELSE mr.HomeTeamScore END) AS GoalsAgainst,
+            COUNT(m.MatchID) AS GamesPlayed
+        FROM 
+            Teams t1
+        LEFT JOIN Matches m ON t1.SquadName = m.HomeTeamName OR t1.SquadName = m.AwayTeamName
+        LEFT JOIN MatchResults mr ON m.MatchID = mr.MatchID
+        WHERE 
+            m.MatchdayID BETWEEN @fromMatchday AND @toMatchday
+        GROUP BY t1.SquadName
+    )
+
+    SELECT 
+        TeamName,
+        GamesPlayed,
+        Wins,
+        Draws,
+        Losses,
+        (Wins * 3 + Draws) AS Points,
+        GoalsFor,
+        GoalsAgainst,
+        (GoalsFor - GoalsAgainst) AS GoalDifference
+    FROM 
+        TeamScores
+    ORDER BY 
+        Points DESC, GoalDifference DESC, GoalsFor DESC;";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@fromMatchday", fromMatchday);
+        command.Parameters.AddWithValue("@toMatchday", toMatchday);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            standings.Add(new TeamStanding
+            {
+                SquadName = reader.GetString(0),
+                GamesPlayed = reader.GetInt32(1),
+                Wins = reader.GetInt32(2),
+                Draws = reader.GetInt32(3),
+                Losses = reader.GetInt32(4),
+                Points = reader.GetInt32(5),
+                GoalsFor = reader.GetInt32(6),
+                GoalsAgainst = reader.GetInt32(7),
+                GoalDifference = reader.GetInt32(8)
+            });
+        }
+
+        return standings;
     }
 
 }
