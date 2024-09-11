@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Team</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5 text-center">Add a New Team</h1>
+        <form action="/Teams/AddTeam" method="post" class="mt-5">
+            <div class="form-group">
+                <label for="SquadName">Squad Name</label>
+                <input type="text" class="form-control" id="SquadName" name="SquadName" required>
+            </div>
+            <div class="form-group">
+                <label for="FondationYear">Foundation Year</label>
+                <input type="number" class="form-control" id="FondationYear" name="FondationYear" required>
+            </div>
+            <div class="form-group">
+                <label for="City">City</label>
+                <input type="text" class="form-control" id="City" name="City" required>
+            </div>
+            <div class="form-group">
+                <label for="ColorOfClub">Color of Club</label>
+                <input type="text" class="form-control" id="ColorOfClub" name="ColorOfClub" required>
+            </div>
+            <div class="form-group">
+                <label for="NameOfStadium">Stadium Name</label>
+                <input type="text" class="form-control" id="NameOfStadium" name="NameOfStadium" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Team</button>
+        </form>
+    </div>
+</body>
+</html>
+
