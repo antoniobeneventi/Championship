@@ -1,4 +1,6 @@
-﻿namespace Championship;
+﻿using System;
+
+namespace Championship;
 
 class Program
 {
@@ -7,7 +9,7 @@ class Program
         string databasePath = "football_league.db"; // Specifica il percorso del database
         DatabaseManager dbManager = new DatabaseManager(databasePath);
 
-        
+
         dbManager.CreateTables();
 
         dbManager.InsertData();
@@ -21,6 +23,8 @@ class Program
             new Team("Milan", 1899, "Milan", "Red and Black", "San Siro"),
             new Team("Roma", 1927, "Rome", "Red and Yellow", "Stadio Olimpico"),
             new Team("Napoli", 1926, "Naples", "Blue and White", "Stadio Diego Armando Maradona"),
+        
+
         };
 
         foreach (var team in predefinedTeams)
@@ -92,6 +96,22 @@ class Program
         {
             Console.WriteLine($"\nTeam: {standing.SquadName}, Games Played: {standing.GamesPlayed} ,Points: {standing.Points}, Wins: {standing.Wins}, Draws: {standing.Draws}, Losses: {standing.Losses}, Goal Difference: {standing.GoalDifference}");
         }
+      
+        //Ottenere tutte le partite giocate da una squadra specifica
+
+        var specifiedMatches = dbManager.GetMatchesForTeam("Juventus");
+        Console.WriteLine();
+        Console.WriteLine("Ottenere tutte le partite giocate da una squadra specifica:");
+        foreach (var match in specifiedMatches)
+        {
+            Console.WriteLine();
+            Console.WriteLine(match);
+           
+
+        }
+
+
+
 
     }
 }

@@ -121,7 +121,7 @@ public class DatabaseManager
         using SQLiteCommand command3 = new SQLiteCommand(insertMatchResults, connection);
         command3.ExecuteNonQuery();
     }
-    
+
     public List<TeamStanding> GetStandingsForMatchdayRange(int fromMatchday, int toMatchday)
     {
         List<TeamStanding> standings = new List<TeamStanding>();
@@ -195,6 +195,52 @@ public class DatabaseManager
         }
 
         return standings;
+    }
+    public List<MatchDetails> GetMatchesForTeam(string teamName)
+    {
+        List<MatchDetails> matches = new List<MatchDetails>();
+
+
+        using (var connection = OpenConnection())
+        {
+            string query = @"
+        SELECT
+            m.MatchID,
+            m.MatchdayID,
+            m.HomeTeamName,
+            m.AwayTeamName,
+            mr.HomeTeamScore,
+            mr.AwayTeamScore
+        FROM
+            Matches m
+        JOIN
+            MatchResults mr ON m.MatchID = mr.MatchID
+        WHERE
+            m.HomeTeamName = @teamName OR m.AwayTeamName = @teamName;";
+
+            using (var command = new SQLiteCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@teamName", teamName);
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        matches.Add(new MatchDetails
+                        {
+                            MatchID = reader.GetInt32(0),
+                            MatchdayID = reader.GetInt32(1),
+                            HomeTeamName = reader.GetString(2),
+                            AwayTeamName = reader.GetString(3),
+                            HomeTeamScore = reader.GetInt32(4),
+                            AwayTeamScore = reader.GetInt32(5)
+                        });
+                    }
+                }
+            }
+        }
+        return matches;
     }
 
 }
