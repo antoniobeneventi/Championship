@@ -2,38 +2,37 @@
 using Microsoft.AspNetCore.Mvc;
 
 
-
-namespace YourProjectNamespace.Controllers;
-
-
-public class TeamsController : Controller
+namespace ChampionshipWebApp.Controllers
 {
-
-    private static List<Team> teams = new List<Team>();
-
-    [HttpPost]
-    public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string NameOfStadium)
+    public class TeamsController : Controller
     {
+        public static List<Team> teams = new List<Team>();
 
-        if (!string.IsNullOrWhiteSpace(SquadName) && !string.IsNullOrWhiteSpace(City) && !string.IsNullOrWhiteSpace(ColorOfClub) && !string.IsNullOrWhiteSpace(NameOfStadium) && FondationYear > 0)
+        [HttpPost]
+        public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string NameOfStadium)
         {
-            var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, NameOfStadium);
-            teams.Add(newTeam);
+            if (teams.Any(t => t.SquadName.Equals(SquadName, System.StringComparison.OrdinalIgnoreCase)))
+            {
+                ViewBag.ErorrMessage = "A team with this name alredy exists";
+                return View("error");
+            }
+            if (!string.IsNullOrWhiteSpace(SquadName) && FondationYear > 0 && !string.IsNullOrWhiteSpace(City) && !string.IsNullOrWhiteSpace(ColorOfClub) && !string.IsNullOrWhiteSpace(NameOfStadium))
+            {
+                var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, NameOfStadium);
+                teams.Add(newTeam);
 
-            return RedirectToAction("TeamList");
+                // Reindirizza alla pagina principale dopo aver aggiunto una squadra
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View("Error");
         }
 
-        return View("Error");
-    }
-
-
-
-    [HttpGet]
-    public IActionResult TeamList()
-    {
-
-        return View(teams);
+        [HttpGet]
+        public IActionResult TeamList()
+        {
+            return View(teams);
+        }
     }
 }
-
 

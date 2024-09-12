@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\AddTeams.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Championship\Championship.csproj" />
   </ItemGroup>
 

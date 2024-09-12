@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Team</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <h1 class="mt-5 text-center">Add a New Team</h1>
-        <form action="/Teams/AddTeam" method="post" class="mt-5">
+        <form id="addTeamForm" method="post" action="/Teams/AddTeam">
             <div class="form-group">
                 <label for="SquadName">Squad Name</label>
                 <input type="text" class="form-control" id="SquadName" name="SquadName" required>
@@ -33,6 +32,6 @@
             <button type="submit" class="btn btn-primary mt-3">Add Team</button>
         </form>
     </div>
+
 </body>
 </html>
-
