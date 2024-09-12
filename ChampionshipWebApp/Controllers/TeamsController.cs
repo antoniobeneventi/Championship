@@ -1,5 +1,6 @@
 ﻿using Championship;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ChampionshipWebApp.Controllers
@@ -7,7 +8,8 @@ namespace ChampionshipWebApp.Controllers
     public class TeamsController : Controller
     {
         public static List<Team> teams = new List<Team>();
-      
+
+        // Metodo esistente per aggiungere una squadra
         [HttpPost]
         public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
         {
@@ -20,55 +22,51 @@ namespace ChampionshipWebApp.Controllers
             {
                 var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, StadiumName);
                 teams.Add(newTeam);
-
-                
-                return RedirectToAction("Index", "Home");
-            }
-
-            return View("Error");
-        }
-
-        [HttpGet]
-        public IActionResult Edit(string squadName)
-        {
-            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
-            if (team == null)
-            {
-                return NotFound();
-            }
-            return View(team);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Team team)
-        {
-            var existingTeam = teams.FirstOrDefault(t => t.SquadName == team.SquadName);
-            if (existingTeam != null)
-            {
-                existingTeam.FondationYear = team.FondationYear;
-                existingTeam.City = team.City;
-                existingTeam.ColorOfClub = team.ColorOfClub;
-                existingTeam.StadiumName = team.StadiumName;
                 return RedirectToAction("Index", "Home");
             }
             return View("Error");
         }
 
-        [HttpPost]
-        public IActionResult Delete(string squadName)
+        [HttpGet]
+        public IActionResult ViewCalendar()
         {
-            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
-            if (team != null)
+            if (teams.Count < 2)
             {
-                teams.Remove(team);
+                ViewBag.Message = "Non ci sono squadre, inseriscine almeno 2.";
+                return View("Calendar");
             }
-            return RedirectToAction("Index", "Home");
+            if (teams.Count % 2 != 0)
+            {
+                ViewBag.Message = "Il numero delle squadre inserito è dispari, aggiungi almeno un'altra squadra.";
+                return View("Calendar");
+            }
+
+            var calendar = GenerateCalendar();
+            return View("Calendar", calendar);
         }
 
-        [HttpGet]
-        public IActionResult TeamList()
+        private List<List<Match>> GenerateCalendar()
         {
-            return View(teams);
+            var calendar = new List<List<Match>>();
+            var matchDays = 6; // Numero di giornate
+
+            for (int i = 0; i < matchDays; i++)
+            {
+                var matchday = new List<Match>();
+
+                for (int j = 0; j < teams.Count / 2; j++)
+                {
+                    var homeTeam = teams[j];
+                    var awayTeam = teams[teams.Count - 1 - j];
+                    var match = new Match(homeTeam, awayTeam, DateTime.Now.AddDays(i), homeTeam.StadiumName, homeTeam.City);
+                    matchday.Add(match);
+                }
+
+                calendar.Add(matchday);
+                teams.Reverse(1, teams.Count - 1); // Rotazione delle squadre
+            }
+
+            return calendar;
         }
     }
 }
