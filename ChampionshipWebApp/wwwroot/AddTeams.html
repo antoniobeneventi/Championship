@@ -4,8 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Team</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Football League System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <h1 class="mt-5 text-center">Add a New Team</h1>
         <form id="addTeamForm" method="post" action="/Teams/AddTeam">
@@ -26,12 +41,14 @@
                 <input type="text" class="form-control" id="ColorOfClub" name="ColorOfClub" required>
             </div>
             <div class="form-group">
-                <label for="NameOfStadium">Stadium Name</label>
-                <input type="text" class="form-control" id="NameOfStadium" name="NameOfStadium" required>
+                <label for="StadiumName">Stadium Name</label>
+                <input type="text" class="form-control" id="StadiumName" name="StadiumName" required>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Add Team</button>
         </form>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

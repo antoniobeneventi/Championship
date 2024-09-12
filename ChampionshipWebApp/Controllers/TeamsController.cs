@@ -1,31 +1,68 @@
 ﻿using Championship;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Linq;
 
 namespace ChampionshipWebApp.Controllers
 {
     public class TeamsController : Controller
     {
         public static List<Team> teams = new List<Team>();
-
+      
         [HttpPost]
-        public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string NameOfStadium)
+        public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
         {
-            if (teams.Any(t => t.SquadName.Equals(SquadName, System.StringComparison.OrdinalIgnoreCase)))
+            if (!teams.Any(t => t.SquadName == SquadName) &&
+                !string.IsNullOrWhiteSpace(SquadName) &&
+                !string.IsNullOrWhiteSpace(City) &&
+                !string.IsNullOrWhiteSpace(ColorOfClub) &&
+                !string.IsNullOrWhiteSpace(StadiumName) &&
+                FondationYear > 0)
             {
-                ViewBag.ErorrMessage = "A team with this name alredy exists";
-                return View("error");
-            }
-            if (!string.IsNullOrWhiteSpace(SquadName) && FondationYear > 0 && !string.IsNullOrWhiteSpace(City) && !string.IsNullOrWhiteSpace(ColorOfClub) && !string.IsNullOrWhiteSpace(NameOfStadium))
-            {
-                var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, NameOfStadium);
+                var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, StadiumName);
                 teams.Add(newTeam);
 
-                // Reindirizza alla pagina principale dopo aver aggiunto una squadra
+                
                 return RedirectToAction("Index", "Home");
             }
 
             return View("Error");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(string squadName)
+        {
+            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            return View(team);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Team team)
+        {
+            var existingTeam = teams.FirstOrDefault(t => t.SquadName == team.SquadName);
+            if (existingTeam != null)
+            {
+                existingTeam.FondationYear = team.FondationYear;
+                existingTeam.City = team.City;
+                existingTeam.ColorOfClub = team.ColorOfClub;
+                existingTeam.StadiumName = team.StadiumName;
+                return RedirectToAction("Index", "Home");
+            }
+            return View("Error");
+        }
+
+        [HttpPost]
+        public IActionResult Delete(string squadName)
+        {
+            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
+            if (team != null)
+            {
+                teams.Remove(team);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -35,4 +72,3 @@ namespace ChampionshipWebApp.Controllers
         }
     }
 }
-

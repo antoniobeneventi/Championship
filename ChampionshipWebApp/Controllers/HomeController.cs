@@ -2,6 +2,7 @@
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Championship;
 
 namespace ChampionshipWebApp.Controllers
 {
@@ -14,20 +15,16 @@ namespace ChampionshipWebApp.Controllers
             _logger = logger;
         }
 
-        
         public IActionResult Index()
         {
-           
-            return View(TeamsController.teams);
+            return View(TeamsController.teams); 
         }
 
-        
         public IActionResult Privacy()
         {
             return View();
         }
 
-      
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
