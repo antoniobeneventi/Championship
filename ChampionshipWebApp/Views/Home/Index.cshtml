@@ -58,6 +58,41 @@
         }
     </div>
 
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Team</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="post" action="/Teams/Edit">
+                        <input type="hidden" id="EditSquadName" name="SquadName" />
+                        <div class="form-group">
+                            <label for="EditFondationYear">Foundation Year</label>
+                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCity">City</label>
+                            <input type="text" class="form-control" id="EditCity" name="City" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditColorOfClub">Color of Club</label>
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditStadiumName">Stadium Name</label>
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>

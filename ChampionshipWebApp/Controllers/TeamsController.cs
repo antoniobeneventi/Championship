@@ -1,4 +1,5 @@
-﻿using Championship;
+﻿
+using Championship;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ChampionshipWebApp.Controllers
     {
         public static List<Team> teams = new List<Team>();
 
-        // Metodo esistente per aggiungere una squadra
+
         [HttpPost]
         public IActionResult AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
         {
@@ -26,6 +27,44 @@ namespace ChampionshipWebApp.Controllers
             }
             return View("Error");
         }
+
+        [HttpGet]
+        public IActionResult Edit(string squadName)
+        {
+            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            return View(team);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Team team)
+        {
+            var existingTeam = teams.FirstOrDefault(t => t.SquadName == team.SquadName);
+            if (existingTeam != null)
+            {
+                existingTeam.FondationYear = team.FondationYear;
+                existingTeam.City = team.City;
+                existingTeam.ColorOfClub = team.ColorOfClub;
+                existingTeam.StadiumName = team.StadiumName;
+                return RedirectToAction("Index", "Home");
+            }
+            return View("Error");
+        }
+
+        [HttpPost]
+        public IActionResult Delete(string squadName)
+        {
+            var team = teams.FirstOrDefault(t => t.SquadName == squadName);
+            if (team != null)
+            {
+                teams.Remove(team);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
 
         [HttpGet]
         public IActionResult ViewCalendar()
@@ -48,25 +87,85 @@ namespace ChampionshipWebApp.Controllers
         private List<List<Match>> GenerateCalendar()
         {
             var calendar = new List<List<Match>>();
-            var matchDays = 6; // Numero di giornate
+            int numTeams = teams.Count;
+            int numMatchdays = numTeams - 1; 
 
-            for (int i = 0; i < matchDays; i++)
+            DateTime startDate = DateTime.Now;
+
+            var rotatingTeams = new List<Team>(teams);
+
+            for (int round = 0; round < numMatchdays; round++)
             {
                 var matchday = new List<Match>();
 
-                for (int j = 0; j < teams.Count / 2; j++)
+                for (int j = 0; j < numTeams / 2; j++)
                 {
-                    var homeTeam = teams[j];
-                    var awayTeam = teams[teams.Count - 1 - j];
-                    var match = new Match(homeTeam, awayTeam, DateTime.Now.AddDays(i), homeTeam.StadiumName, homeTeam.City);
+                    var homeTeam = rotatingTeams[j];
+                    var awayTeam = rotatingTeams[numTeams - 1 - j];
+
+                    var matchDate = startDate.AddDays(round * 7);
+                    var match = new Match(homeTeam, awayTeam, matchDate, homeTeam.StadiumName, homeTeam.City);
                     matchday.Add(match);
                 }
 
                 calendar.Add(matchday);
-                teams.Reverse(1, teams.Count - 1); // Rotazione delle squadre
+
+                var lastTeam = rotatingTeams[numTeams - 1];
+                rotatingTeams.RemoveAt(numTeams - 1);
+                rotatingTeams.Insert(1, lastTeam);
+            }
+
+            for (int round = 0; round < numMatchdays; round++)
+            {
+                var matchday = new List<Match>();
+
+                for (int j = 0; j < numTeams / 2; j++)
+                {
+                    var homeTeam = rotatingTeams[numTeams - 1 - j]; 
+                    var awayTeam = rotatingTeams[j];
+
+                    var matchDate = startDate.AddDays((numMatchdays + round) * 7);
+                    var match = new Match(homeTeam, awayTeam, matchDate, homeTeam.StadiumName, homeTeam.City);
+                    matchday.Add(match);
+                }
+
+                calendar.Add(matchday);
+
+                var lastTeam = rotatingTeams[numTeams - 1];
+                rotatingTeams.RemoveAt(numTeams - 1);
+                rotatingTeams.Insert(1, lastTeam);
             }
 
             return calendar;
         }
+
+
+
+
+        [HttpPost]
+        public IActionResult GenerateResults()
+        {
+            var calendar = GenerateCalendar();
+
+            foreach (var matchday in calendar)
+            {
+                foreach (var match in matchday)
+                {
+
+                    Random random = new Random();
+                    int homeGoals = random.Next(0, 4);
+                    int awayGoals = random.Next(0, 4);
+
+
+                    var result = new MatchResult(homeGoals, awayGoals);
+
+
+                    match.SetResult(result);
+                }
+            }
+            return View("Calendar", calendar);
+        }
+
+
     }
 }

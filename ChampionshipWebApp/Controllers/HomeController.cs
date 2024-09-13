@@ -2,7 +2,7 @@
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Championship;
+
 
 namespace ChampionshipWebApp.Controllers
 {
