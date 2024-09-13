@@ -176,52 +176,70 @@ namespace ChampionshipWebApp.Controllers
             return View(rankings);
         }
 
-        private List<KeyValuePair<Team, int>> GenerateRankings()
+        private Dictionary<Team, TeamStats> GenerateRankings()
         {
-            var rankings = new Dictionary<Team, int>();
+            var rankings = new Dictionary<Team, TeamStats>();
 
-           
+            // Inizializza tutte le squadre con statistiche vuote
             foreach (var team in TeamsController.teams)
             {
-                rankings[team] = 0;
+                rankings[team] = new TeamStats();
             }
 
+            // Usa il calendario con i risultati già generati
             var calendar = GeneratedCalendarWithResults;
 
+            // Controlla che ci sia un calendario con risultati
             if (calendar != null && calendar.Count > 0)
             {
+                // Calcola le statistiche per ogni squadra
                 foreach (var matchday in calendar)
                 {
                     foreach (var match in matchday)
                     {
-                        if (match.Result != null)
+                        if (match.Result != null) // Se c'è un risultato
                         {
-                            
+                            var homeTeamStats = rankings[match.HomeTeam];
+                            var awayTeamStats = rankings[match.AwayTeam];
+
+                            homeTeamStats.GamesPlayed++;
+                            awayTeamStats.GamesPlayed++;
+
+                            homeTeamStats.GoalsFor += match.Result.HomeTeamScore;
+                            homeTeamStats.GoalsAgainst += match.Result.AwayTeamScore;
+
+                            awayTeamStats.GoalsFor += match.Result.AwayTeamScore;
+                            awayTeamStats.GoalsAgainst += match.Result.HomeTeamScore;
+
+                            // Assegna punti in base al risultato della partita
                             if (match.Result.HomeTeamScore > match.Result.AwayTeamScore)
                             {
-                                
-                                rankings[match.HomeTeam] += 3;
+                                // Vittoria squadra di casa
+                                homeTeamStats.Wins++;
+                                homeTeamStats.Points += 3;
+                                awayTeamStats.Losses++;
                             }
                             else if (match.Result.HomeTeamScore < match.Result.AwayTeamScore)
                             {
-                                
-                                rankings[match.AwayTeam] += 3;
+                                // Vittoria squadra in trasferta
+                                awayTeamStats.Wins++;
+                                awayTeamStats.Points += 3;
+                                homeTeamStats.Losses++;
                             }
                             else
                             {
-                                
-                                rankings[match.HomeTeam] += 1;
-                                rankings[match.AwayTeam] += 1;
+                                // Pareggio
+                                homeTeamStats.Draws++;
+                                awayTeamStats.Draws++;
+                                homeTeamStats.Points += 1;
+                                awayTeamStats.Points += 1;
                             }
                         }
                     }
                 }
             }
 
-            
-            var orderedRankings = rankings.OrderByDescending(r => r.Value).ToList();
-
-            return orderedRankings;
+            return rankings;
         }
 
 

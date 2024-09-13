@@ -1,4 +1,4 @@
-﻿@model List<KeyValuePair<Championship.Team, int>>
+﻿@model Dictionary<Championship.Team, Championship.TeamStats>
 
 <div class="container">
     <h1 class="mt-5 text-center">League Rankings</h1>
@@ -11,16 +11,34 @@
                     <th>Position</th>
                     <th>Team</th>
                     <th>Points</th>
+                    <th>Games Played</th>
+                    <th>Wins</th>
+                    <th>Draws</th>
+                    <th>Losses</th>
+                    <th>Goals For</th>
+                    <th>Goals Against</th>
+                    <th>Goal Difference</th>
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Count; i++)
-                {
-                    <tr>
-                        <td>@(i + 1)</td>
-                        <td>@Model[i].Key.SquadName</td>
-                        <td>@Model[i].Value</td>
-                    </tr>
+                @{
+                    int position = 1;
+                    foreach (var team in Model.OrderByDescending(r => r.Value.Points))
+                    {
+                        <tr>
+                            <td>@position</td>
+                            <td>@team.Key.SquadName</td>
+                            <td>@team.Value.Points</td>
+                            <td>@team.Value.GamesPlayed</td>
+                            <td>@team.Value.Wins</td>
+                            <td>@team.Value.Draws</td>
+                            <td>@team.Value.Losses</td>
+                            <td>@team.Value.GoalsFor</td>
+                            <td>@team.Value.GoalsAgainst</td>
+                            <td>@team.Value.GoalDifference</td>
+                        </tr>
+                        position++;
+                    }
                 }
             </tbody>
         </table>
@@ -30,6 +48,7 @@
         <p class="text-center">No rankings available. Please generate match results first.</p>
     }
 </div>
+
 
 
 

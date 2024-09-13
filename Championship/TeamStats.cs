@@ -2,14 +2,27 @@
 
 public class TeamStats
 {
-    public int Wins { get; }
-    public int Draws { get; }
-    public int Losses { get; }
-    public int GoalsFor { get; }
-    public int GoalsAgainst { get; }
-    public int Points { get; }
+    public int Wins { get; set; }
+    public int Draws { get; set; }
+    public int Losses { get; set; }
+    public int GoalsFor { get; set; }
+    public int GoalsAgainst { get; set; }
+    public int Points { get; set; } // Cambiato per poter essere aggiornato
+    public int GamesPlayed { get; set; }
 
-    public int GamesPlayed { get; }
+    public TeamStats()
+    {
+        Wins = 0;
+        Draws = 0;
+        Losses = 0;
+        GoalsFor = 0;
+        GoalsAgainst = 0;
+        Points = 0;
+        GamesPlayed = 0;
+    }
+
+    public int GoalDifference => GoalsFor - GoalsAgainst;
+
 
     public TeamStats(int wins, int draws, int losses, int goalsFor, int goalsAgainst, int points, int gamesPlayed)
     {
