@@ -10,13 +10,21 @@
 
     @if (Model != null && Model.Count > 0)
     {
-        <h2 class="mt-5">Calendar</h2>
-
+        <br />
         <div class="text-center mb-4">
             <form method="post" action="/Teams/GenerateResults">
                 <button type="submit" class="btn btn-success">Generate All Match Results</button>
             </form>
+            <br />
+            <div class="text-center mb-4">
+                <form asp-action="Rankings" asp-controller="Teams" method="post">
+                    <button type="submit" class="btn btn-primary">Generate Rankings</button>
+                </form>
+            </div>
+
         </div>
+
+        <h2 class="mt-5">Calendar</h2>
 
         @for (int i = 0; i < Model.Count; i++)
         {
@@ -47,10 +55,7 @@
 
                                     @($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")
                                 }
-                                @* else
-                    {
-                    <span>vs</span>
-                    } *@
+                               
                             </td>
                         </tr>
                     }
@@ -63,4 +68,5 @@
         <p>No matches scheduled.</p>
     }
 </div>
+
 

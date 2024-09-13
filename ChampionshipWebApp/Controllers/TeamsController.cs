@@ -1,5 +1,4 @@
-﻿
-using Championship;
+﻿using Championship;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ namespace ChampionshipWebApp.Controllers
     public class TeamsController : Controller
     {
         public static List<Team> teams = new List<Team>();
+        public static List<List<Match>> GeneratedCalendarWithResults = new List<List<Match>>();
 
 
         [HttpPost]
@@ -90,6 +90,7 @@ namespace ChampionshipWebApp.Controllers
             int numTeams = teams.Count;
             int numMatchdays = numTeams - 1; 
 
+          
             DateTime startDate = DateTime.Now;
 
             var rotatingTeams = new List<Team>(teams);
@@ -140,8 +141,7 @@ namespace ChampionshipWebApp.Controllers
         }
 
 
-
-
+     
         [HttpPost]
         public IActionResult GenerateResults()
         {
@@ -151,21 +151,83 @@ namespace ChampionshipWebApp.Controllers
             {
                 foreach (var match in matchday)
                 {
-
                     Random random = new Random();
                     int homeGoals = random.Next(0, 4);
                     int awayGoals = random.Next(0, 4);
 
-
                     var result = new MatchResult(homeGoals, awayGoals);
-
-
                     match.SetResult(result);
                 }
             }
+
+            GeneratedCalendarWithResults = calendar;
+
             return View("Calendar", calendar);
         }
 
 
+        [HttpPost]
+        public IActionResult Rankings()
+        {
+
+            var rankings = GenerateRankings();
+
+
+            return View(rankings);
+        }
+
+        private List<KeyValuePair<Team, int>> GenerateRankings()
+        {
+            var rankings = new Dictionary<Team, int>();
+
+           
+            foreach (var team in TeamsController.teams)
+            {
+                rankings[team] = 0;
+            }
+
+            var calendar = GeneratedCalendarWithResults;
+
+            if (calendar != null && calendar.Count > 0)
+            {
+                foreach (var matchday in calendar)
+                {
+                    foreach (var match in matchday)
+                    {
+                        if (match.Result != null)
+                        {
+                            
+                            if (match.Result.HomeTeamScore > match.Result.AwayTeamScore)
+                            {
+                                
+                                rankings[match.HomeTeam] += 3;
+                            }
+                            else if (match.Result.HomeTeamScore < match.Result.AwayTeamScore)
+                            {
+                                
+                                rankings[match.AwayTeam] += 3;
+                            }
+                            else
+                            {
+                                
+                                rankings[match.HomeTeam] += 1;
+                                rankings[match.AwayTeam] += 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            
+            var orderedRankings = rankings.OrderByDescending(r => r.Value).ToList();
+
+            return orderedRankings;
+        }
+
+
+
+
+
     }
 }
+
