@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Championship.Team>
+
+<h2>Lista Squadre</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>City</th>
+            <th>Fondation Year</th>
+            <th>Color Of Club</th>
+            <th>Stadium Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model)
+        {
+            <tr>
+                <td>@team.SquadName</td>
+                <td>@team.City</td>
+                <td>@team.FondationYear</td>
+                <td>@team.ColorOfClub</td>
+                <td>@team.StadiumName</td>
+            </tr>
+        }
+    </tbody>
+</table>

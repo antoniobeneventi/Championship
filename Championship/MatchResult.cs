@@ -2,8 +2,14 @@
 
 public class MatchResult
 {
+    public int Id { get; set; }
     public int HomeTeamScore { get; }
     public int AwayTeamScore { get; }
+
+    public MatchResult()
+    {
+
+    }
     public MatchResult(int homeTeamScore, int awayTeamScore)
     {
         if (homeTeamScore < 0) //controlla se il risultato della squadra di casa non sia negativo

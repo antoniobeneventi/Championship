@@ -2,12 +2,13 @@
 
 public class TeamStats
 {
+    public int TeamId { get; set; }
     public int Wins { get; set; }
     public int Draws { get; set; }
     public int Losses { get; set; }
     public int GoalsFor { get; set; }
     public int GoalsAgainst { get; set; }
-    public int Points { get; set; } // Cambiato per poter essere aggiornato
+    public int Points { get; set; }
     public int GamesPlayed { get; set; }
 
     public TeamStats()
