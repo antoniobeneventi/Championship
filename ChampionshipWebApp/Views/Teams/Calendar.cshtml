@@ -1,4 +1,7 @@
-﻿<div class="container">
+﻿@using Championship
+@model List<List<Match>>
+
+<div class="container">
     <h1 class="mt-5 text-center">Football League Calendar</h1>
 
     @if (ViewBag.Message != null)
@@ -17,12 +20,10 @@
             </form>
             <br />
             <div class="text-center mb-4">
-                <form asp-action="Rankings" method="post">
-                    <button type="submit" class="btn btn-primary">View Rankings</button>
+                <form asp-action="Rankings" asp-controller="Teams" method="post">
+                    <button type="submit" class="btn btn-primary">Generate Rankings</button>
                 </form>
-
             </div>
-
         </div>
 
         <h2 class="mt-5">Calendar</h2>
@@ -45,18 +46,20 @@
                     @foreach (var match in Model[i])
                     {
                         <tr>
-                            <td>@match.HomeTeam.SquadName</td>
-                            <td>@match.AwayTeam.SquadName</td>
+                            <td>@match.HomeTeamName</td>
+                            <td>@match.AwayTeamName</td>
                             <td>@match.MatchDate.ToShortDateString()</td>
                             <td>@match.StadiumName</td>
                             <td>@match.City</td>
                             <td>
                                 @if (match.Result != null)
                                 {
-
-                                    @($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")
+                                    <text>@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</text>
                                 }
-                               
+                                else
+                                {
+                                    <text>Not Played</text>
+                                }
                             </td>
                         </tr>
                     }
@@ -69,5 +72,3 @@
         <p>No matches scheduled.</p>
     }
 </div>
-
-

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ChampionshipWebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class CreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,9 @@ namespace ChampionshipWebApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    HomeTeamScore = table.Column<int>(type: "INTEGER", nullable: false),
+                    AwayTeamScore = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,34 +31,15 @@ namespace ChampionshipWebApp.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SquadName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    SquadName = table.Column<string>(type: "TEXT", nullable: false),
                     FondationYear = table.Column<int>(type: "INTEGER", nullable: false),
-                    City = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    ColorOfClub = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    StadiumName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
+                    City = table.Column<string>(type: "TEXT", nullable: false),
+                    ColorOfClub = table.Column<string>(type: "TEXT", nullable: false),
+                    StadiumName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teams", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TeamStats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Wins = table.Column<int>(type: "INTEGER", nullable: false),
-                    Draws = table.Column<int>(type: "INTEGER", nullable: false),
-                    Losses = table.Column<int>(type: "INTEGER", nullable: false),
-                    GoalsFor = table.Column<int>(type: "INTEGER", nullable: false),
-                    GoalsAgainst = table.Column<int>(type: "INTEGER", nullable: false),
-                    Points = table.Column<int>(type: "INTEGER", nullable: false),
-                    GamesPlayed = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeamStats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,13 +68,13 @@ namespace ChampionshipWebApp.Migrations
                         column: x => x.AwayTeamId,
                         principalTable: "Teams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Matches_Teams_HomeTeamId",
                         column: x => x.HomeTeamId,
                         principalTable: "Teams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -115,9 +98,6 @@ namespace ChampionshipWebApp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Matches");
-
-            migrationBuilder.DropTable(
-                name: "TeamStats");
 
             migrationBuilder.DropTable(
                 name: "MatchResults");

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ChampionshipWebApp.Data;
+
 using Microsoft.EntityFrameworkCore;
 using Championship;
 
@@ -69,17 +69,24 @@ namespace ChampionshipWebApp.Controllers
         }
 
         // Metodo per eliminare una squadra dal database
-        [HttpPost]
-        public async Task<IActionResult> Delete(string squadName)
-        {
-            var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
-            if (team != null)
-            {
-                _context.Teams.Remove(team);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction("Index", "Home");
-        }
+      public async Task<IActionResult> Delete(string squadName)
+{
+    var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
+    if (team != null)
+    {
+        // Rimuovi prima i match associati al team
+        var matches = await _context.Matches
+            .Where(m => m.HomeTeamId == team.Id || m.AwayTeamId == team.Id)
+            .ToListAsync();
+
+        _context.Matches.RemoveRange(matches);
+
+        // Poi rimuovi il team
+        _context.Teams.Remove(team);
+        await _context.SaveChangesAsync();
+    }
+    return RedirectToAction("Index", "Home");
+}
 
         // Metodo per visualizzare il calendario
         [HttpGet]
@@ -162,24 +169,28 @@ namespace ChampionshipWebApp.Controllers
             var teams = await _context.Teams.ToListAsync();
             var calendar = GenerateCalendar(teams);
 
+            Random random = new Random();
             foreach (var matchday in calendar)
             {
                 foreach (var match in matchday)
                 {
-                    Random random = new Random();
                     int homeGoals = random.Next(0, 4);
                     int awayGoals = random.Next(0, 4);
 
                     var result = new MatchResult(homeGoals, awayGoals);
                     match.SetResult(result);
 
-                    // Puoi decidere di salvare i risultati nel database se necessario
+                    _context.Matches.Add(match);
+                    _context.MatchResults.Add(result);
                 }
             }
 
-            // Passa il calendario con i risultati alla vista
+            await _context.SaveChangesAsync();
+
             return View("Calendar", calendar);
         }
+
+
 
         [HttpPost]
         public IActionResult Rankings()
@@ -193,16 +204,13 @@ namespace ChampionshipWebApp.Controllers
             var rankings = new Dictionary<Team, TeamStats>();
 
             var teams = _context.Teams.ToList();
-            Console.WriteLine($"Retrieved {teams.Count} teams from the database.");
 
-            // Initialize all teams with empty statistics
             foreach (var team in teams)
             {
                 rankings[team] = new TeamStats();
             }
 
             var calendar = GenerateCalendar(teams);
-            Console.WriteLine($"Generated {calendar.Count} matchdays.");
 
             foreach (var matchday in calendar)
             {
@@ -213,17 +221,19 @@ namespace ChampionshipWebApp.Controllers
                         var homeTeamStats = rankings[match.HomeTeam];
                         var awayTeamStats = rankings[match.AwayTeam];
 
-                        Console.WriteLine($"Processing match: {match.HomeTeam.SquadName} vs {match.AwayTeam.SquadName}");
-
+                        // Aggiorna le partite giocate
                         homeTeamStats.GamesPlayed++;
                         awayTeamStats.GamesPlayed++;
 
+                        // Aggiorna i gol fatti e subiti
                         homeTeamStats.GoalsFor += match.Result.HomeTeamScore;
                         homeTeamStats.GoalsAgainst += match.Result.AwayTeamScore;
-
                         awayTeamStats.GoalsFor += match.Result.AwayTeamScore;
                         awayTeamStats.GoalsAgainst += match.Result.HomeTeamScore;
 
+
+
+                        // Aggiorna vittorie, sconfitte, pareggi e punti
                         if (match.Result.HomeTeamScore > match.Result.AwayTeamScore)
                         {
                             homeTeamStats.Wins++;
@@ -238,6 +248,7 @@ namespace ChampionshipWebApp.Controllers
                         }
                         else
                         {
+                            // Pareggio
                             homeTeamStats.Draws++;
                             awayTeamStats.Draws++;
                             homeTeamStats.Points += 1;
@@ -250,8 +261,14 @@ namespace ChampionshipWebApp.Controllers
             return rankings;
         }
 
+
+
     }
 }
+
+
+
+
 
 
 

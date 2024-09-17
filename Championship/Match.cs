@@ -1,22 +1,31 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Championship;
 
 public class Match
 {
     public int Id { get; set; }
-    public Team HomeTeam { get; set; }
-    public Team AwayTeam { get; set; }
+    public int HomeTeamId { get; set; }
+    public int AwayTeamId { get; set; }
+    public int? ResultId { get; set; } // Nuovo
+
     public DateTime MatchDate { get; set; }
     public string StadiumName { get; set; }
     public string City { get; set; }
     public MatchResult? Result { get; set; }
 
-    // Costruttore pubblico senza parametri per Entity Framework
-    public Match()
-    {
-    }
+    public Team HomeTeam { get; set; }
+    public Team AwayTeam { get; set; }
 
-    // Costruttore con parametri
+    [NotMapped]
+    public string HomeTeamName => HomeTeam?.SquadName;
+
+    [NotMapped]
+    public string AwayTeamName => AwayTeam?.SquadName;
+
+    public Match() { }
+
     public Match(Team homeTeam, Team awayTeam, DateTime matchDate, string stadiumName, string city)
     {
         if (homeTeam == null) throw new ArgumentNullException(nameof(homeTeam));
@@ -35,6 +44,7 @@ public class Match
     public void SetResult(MatchResult result)
     {
         Result = result ?? throw new ArgumentNullException(nameof(result));
+        ResultId = result.Id; // Associa il risultato
     }
 
     public override bool Equals(object obj)
@@ -58,6 +68,6 @@ public class Match
     public override string ToString()
     {
         string resultString = Result != null ? $"{Result.HomeTeamScore} - {Result.AwayTeamScore}" : "vs";
-        return $"{HomeTeam?.SquadName ?? "Unknown"} {resultString} {AwayTeam?.SquadName ?? "Unknown"} - Date: {MatchDate.ToShortDateString()}, Stadium: {StadiumName}, City: {City}";
+        return $"{HomeTeamName ?? "Unknown"} {resultString} {AwayTeamName ?? "Unknown"} - Date: {MatchDate.ToShortDateString()}, Stadium: {StadiumName}, City: {City}";
     }
 }

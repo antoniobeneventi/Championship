@@ -1,7 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
-using ChampionshipWebApp.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
