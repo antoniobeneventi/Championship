@@ -116,7 +116,8 @@ namespace ChampionshipWebApp.Migrations
 
                     b.HasOne("Championship.MatchResult", "Result")
                         .WithMany()
-                        .HasForeignKey("ResultId");
+                        .HasForeignKey("ResultId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AwayTeam");
 

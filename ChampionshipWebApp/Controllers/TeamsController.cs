@@ -68,25 +68,25 @@ namespace ChampionshipWebApp.Controllers
             return View(team);
         }
 
-        // Metodo per eliminare una squadra dal database
-      public async Task<IActionResult> Delete(string squadName)
-{
-    var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
-    if (team != null)
-    {
-        // Rimuovi prima i match associati al team
-        var matches = await _context.Matches
-            .Where(m => m.HomeTeamId == team.Id || m.AwayTeamId == team.Id)
-            .ToListAsync();
+        public async Task<IActionResult> Delete(string squadName)
+        {
+            var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
+            if (team != null)
+            {
 
-        _context.Matches.RemoveRange(matches);
+                var matches = await _context.Matches
+                    .Where(m => m.HomeTeamId == team.Id || m.AwayTeamId == team.Id)
+                    .ToListAsync();
 
-        // Poi rimuovi il team
-        _context.Teams.Remove(team);
-        await _context.SaveChangesAsync();
-    }
-    return RedirectToAction("Index", "Home");
-}
+                _context.Matches.RemoveRange(matches);
+
+                // Poi rimuovi il team
+                _context.Teams.Remove(team);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
 
         // Metodo per visualizzare il calendario
         [HttpGet]
@@ -104,9 +104,46 @@ namespace ChampionshipWebApp.Controllers
                 return View("Calendar");
             }
 
-            var calendar = GenerateCalendar(teams);
-            return View("Calendar", calendar);
+            // Check if results already exist
+            var existingMatches = await _context.Matches.AnyAsync();
+            if (!existingMatches)
+            {
+                var calendar = GenerateCalendar(teams);
+                await SaveMatchResults(calendar); // Save results only if none exist
+            }
+
+            // Fetch the calendar (including existing results)
+            var matches = await _context.Matches.Include(m => m.Result).Include(m => m.HomeTeam).Include(m => m.AwayTeam).ToListAsync();
+            var groupedMatches = matches.GroupBy(m => m.MatchDate.Date)
+                                        .OrderBy(g => g.Key)
+                                        .Select(g => g.ToList())
+                                        .ToList();
+
+            return View("Calendar", groupedMatches);
         }
+
+        private async Task SaveMatchResults(List<List<Match>> calendar)
+        {
+            Random random = new Random();
+            foreach (var matchday in calendar)
+            {
+                foreach (var match in matchday)
+                {
+                    int homeGoals = random.Next(0, 4);
+                    int awayGoals = random.Next(0, 4);
+
+                    var result = new MatchResult(homeGoals, awayGoals);
+                    match.SetResult(result);
+
+                    _context.Matches.Add(match);
+                    _context.MatchResults.Add(result);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+
 
         private List<List<Match>> GenerateCalendar(List<Team> teams)
         {
@@ -163,32 +200,32 @@ namespace ChampionshipWebApp.Controllers
             return calendar;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GenerateResults()
-        {
-            var teams = await _context.Teams.ToListAsync();
-            var calendar = GenerateCalendar(teams);
+        //[HttpPost]
+        //public async Task<IActionResult> GenerateResults()
+        //{
+        //    var teams = await _context.Teams.ToListAsync();
+        //    var calendar = GenerateCalendar(teams);
 
-            Random random = new Random();
-            foreach (var matchday in calendar)
-            {
-                foreach (var match in matchday)
-                {
-                    int homeGoals = random.Next(0, 4);
-                    int awayGoals = random.Next(0, 4);
+        //    Random random = new Random();
+        //    foreach (var matchday in calendar)
+        //    {
+        //        foreach (var match in matchday)
+        //        {
+        //            int homeGoals = random.Next(0, 4);
+        //            int awayGoals = random.Next(0, 4);
 
-                    var result = new MatchResult(homeGoals, awayGoals);
-                    match.SetResult(result);
+        //            var result = new MatchResult(homeGoals, awayGoals);
+        //            match.SetResult(result);
 
-                    _context.Matches.Add(match);
-                    _context.MatchResults.Add(result);
-                }
-            }
+        //            _context.Matches.Add(match);
+        //            _context.MatchResults.Add(result);
+        //        }
+        //    }
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return View("Calendar", calendar);
-        }
+        //    return View("Calendar", calendar);
+        //}
 
 
 
@@ -203,75 +240,68 @@ namespace ChampionshipWebApp.Controllers
         {
             var rankings = new Dictionary<Team, TeamStats>();
 
+
             var teams = _context.Teams.ToList();
+
 
             foreach (var team in teams)
             {
                 rankings[team] = new TeamStats();
             }
 
-            var calendar = GenerateCalendar(teams);
 
-            foreach (var matchday in calendar)
+            var matches = _context.Matches.Include(m => m.Result).Include(m => m.HomeTeam).Include(m => m.AwayTeam).ToList();
+
+            foreach (var match in matches)
             {
-                foreach (var match in matchday)
+                if (match.Result != null)
                 {
-                    if (match.Result != null)
+                    var homeTeamStats = rankings[match.HomeTeam];
+                    var awayTeamStats = rankings[match.AwayTeam];
+
+
+                    homeTeamStats.GamesPlayed++;
+                    awayTeamStats.GamesPlayed++;
+
+
+                    homeTeamStats.GoalsFor += match.Result.HomeTeamScore;
+                    homeTeamStats.GoalsAgainst += match.Result.AwayTeamScore;
+                    awayTeamStats.GoalsFor += match.Result.AwayTeamScore;
+                    awayTeamStats.GoalsAgainst += match.Result.HomeTeamScore;
+
+
+                    if (match.Result.HomeTeamScore > match.Result.AwayTeamScore)
                     {
-                        var homeTeamStats = rankings[match.HomeTeam];
-                        var awayTeamStats = rankings[match.AwayTeam];
-
-                        // Aggiorna le partite giocate
-                        homeTeamStats.GamesPlayed++;
-                        awayTeamStats.GamesPlayed++;
-
-                        // Aggiorna i gol fatti e subiti
-                        homeTeamStats.GoalsFor += match.Result.HomeTeamScore;
-                        homeTeamStats.GoalsAgainst += match.Result.AwayTeamScore;
-                        awayTeamStats.GoalsFor += match.Result.AwayTeamScore;
-                        awayTeamStats.GoalsAgainst += match.Result.HomeTeamScore;
-
-
-
-                        // Aggiorna vittorie, sconfitte, pareggi e punti
-                        if (match.Result.HomeTeamScore > match.Result.AwayTeamScore)
-                        {
-                            homeTeamStats.Wins++;
-                            homeTeamStats.Points += 3;
-                            awayTeamStats.Losses++;
-                        }
-                        else if (match.Result.HomeTeamScore < match.Result.AwayTeamScore)
-                        {
-                            awayTeamStats.Wins++;
-                            awayTeamStats.Points += 3;
-                            homeTeamStats.Losses++;
-                        }
-                        else
-                        {
-                            // Pareggio
-                            homeTeamStats.Draws++;
-                            awayTeamStats.Draws++;
-                            homeTeamStats.Points += 1;
-                            awayTeamStats.Points += 1;
-                        }
+                        homeTeamStats.Wins++;
+                        homeTeamStats.Points += 3;
+                        awayTeamStats.Losses++;
+                    }
+                    else if (match.Result.HomeTeamScore < match.Result.AwayTeamScore)
+                    {
+                        awayTeamStats.Wins++;
+                        awayTeamStats.Points += 3;
+                        homeTeamStats.Losses++;
+                    }
+                    else
+                    {
+                        homeTeamStats.Draws++;
+                        awayTeamStats.Draws++;
+                        homeTeamStats.Points += 1;
+                        awayTeamStats.Points += 1;
                     }
                 }
             }
 
-            return rankings;
+
+            var sortedRankings = rankings.OrderByDescending(r => r.Value.Points)
+                                         .ThenByDescending(r => r.Value.GoalDifference)
+                                         .ThenByDescending(r => r.Value.GoalsFor)
+                                         .ToDictionary(r => r.Key, r => r.Value);
+            return sortedRankings;
         }
-
-
 
     }
 }
-
-
-
-
-
-
-
 
 
 

@@ -50,10 +50,10 @@ namespace ChampionshipWebApp.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     HomeTeamId = table.Column<int>(type: "INTEGER", nullable: false),
                     AwayTeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ResultId = table.Column<int>(type: "INTEGER", nullable: true),
                     MatchDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     StadiumName = table.Column<string>(type: "TEXT", nullable: false),
-                    City = table.Column<string>(type: "TEXT", nullable: false),
-                    ResultId = table.Column<int>(type: "INTEGER", nullable: true)
+                    City = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,7 +62,8 @@ namespace ChampionshipWebApp.Migrations
                         name: "FK_Matches_MatchResults_ResultId",
                         column: x => x.ResultId,
                         principalTable: "MatchResults",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Matches_Teams_AwayTeamId",
                         column: x => x.AwayTeamId,

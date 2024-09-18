@@ -13,12 +13,9 @@
 
     @if (Model != null && Model.Count > 0)
     {
-        <br />
+       
         <div class="text-center mb-4">
-            <form method="post" action="/Teams/GenerateResults">
-                <button type="submit" class="btn btn-success">Generate All Match Results</button>
-            </form>
-            <br />
+         
             <div class="text-center mb-4">
                 <form asp-action="Rankings" asp-controller="Teams" method="post">
                     <button type="submit" class="btn btn-primary">Generate Rankings</button>

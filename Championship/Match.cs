@@ -8,7 +8,7 @@ public class Match
     public int Id { get; set; }
     public int HomeTeamId { get; set; }
     public int AwayTeamId { get; set; }
-    public int? ResultId { get; set; } // Nuovo
+    public int? ResultId { get; set; } 
 
     public DateTime MatchDate { get; set; }
     public string StadiumName { get; set; }
