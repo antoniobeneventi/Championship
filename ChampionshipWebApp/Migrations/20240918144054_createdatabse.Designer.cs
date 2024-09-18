@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChampionshipWebApp.Migrations
 {
     [DbContext(typeof(FootballLeagueContext))]
-    [Migration("20240918123051_CreateDatabase")]
-    partial class CreateDatabase
+    [Migration("20240918144054_createdatabse")]
+    partial class createdatabse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

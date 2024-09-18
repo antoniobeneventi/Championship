@@ -80,7 +80,7 @@ namespace ChampionshipWebApp.Controllers
 
                 _context.Matches.RemoveRange(matches);
 
-                // Poi rimuovi il team
+             
                 _context.Teams.Remove(team);
                 await _context.SaveChangesAsync();
             }
@@ -104,15 +104,13 @@ namespace ChampionshipWebApp.Controllers
                 return View("Calendar");
             }
 
-            // Check if results already exist
             var existingMatches = await _context.Matches.AnyAsync();
             if (!existingMatches)
             {
                 var calendar = GenerateCalendar(teams);
-                await SaveMatchResults(calendar); // Save results only if none exist
+                await SaveMatchResults(calendar); 
             }
 
-            // Fetch the calendar (including existing results)
             var matches = await _context.Matches.Include(m => m.Result).Include(m => m.HomeTeam).Include(m => m.AwayTeam).ToListAsync();
             var groupedMatches = matches.GroupBy(m => m.MatchDate.Date)
                                         .OrderBy(g => g.Key)
@@ -200,35 +198,7 @@ namespace ChampionshipWebApp.Controllers
             return calendar;
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> GenerateResults()
-        //{
-        //    var teams = await _context.Teams.ToListAsync();
-        //    var calendar = GenerateCalendar(teams);
-
-        //    Random random = new Random();
-        //    foreach (var matchday in calendar)
-        //    {
-        //        foreach (var match in matchday)
-        //        {
-        //            int homeGoals = random.Next(0, 4);
-        //            int awayGoals = random.Next(0, 4);
-
-        //            var result = new MatchResult(homeGoals, awayGoals);
-        //            match.SetResult(result);
-
-        //            _context.Matches.Add(match);
-        //            _context.MatchResults.Add(result);
-        //        }
-        //    }
-
-        //    await _context.SaveChangesAsync();
-
-        //    return View("Calendar", calendar);
-        //}
-
-
-
+     
         [HttpPost]
         public IActionResult Rankings()
         {
