@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
 using Championship;
@@ -27,6 +28,20 @@ namespace ChampionshipWebApp.Controllers
                 var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, StadiumName);
                 _context.Teams.Add(newTeam);
                 await _context.SaveChangesAsync();
+
+                if (await _context.Matches.AnyAsync())
+                {
+                    var matches = await _context.Matches.ToListAsync();
+                    var matchResults = await _context.MatchResults.ToListAsync();
+                    _context.Matches.RemoveRange(matches);
+                    _context.MatchResults.RemoveRange(matchResults);
+                    await _context.SaveChangesAsync();
+                }
+
+                var teams = await _context.Teams.ToListAsync();
+                var calendar = GenerateCalendar(teams);
+                await SaveMatchResults(calendar);
+
                 return RedirectToAction("Index", "Home");
             }
             return View("Error");
@@ -73,19 +88,34 @@ namespace ChampionshipWebApp.Controllers
             var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
             if (team != null)
             {
-
                 var matches = await _context.Matches
-                    .Where(m => m.HomeTeamId == team.Id || m.AwayTeamId == team.Id)
+                .Include(m => m.Result)
+                .ToListAsync();
+
+                var matchResultIds = matches.Select(m => m.ResultId).Distinct().ToList();
+                var matchResults = await _context.MatchResults
+                    .Where(mr => matchResultIds.Contains(mr.Id))
                     .ToListAsync();
 
-                _context.Matches.RemoveRange(matches);
 
-             
+                _context.Matches.RemoveRange(matches);
+                _context.MatchResults.RemoveRange(matchResults);
+
                 _context.Teams.Remove(team);
                 await _context.SaveChangesAsync();
+
+                var teams = await _context.Teams.ToListAsync();
+                if (teams.Count >= 2)
+                {
+                    var calendar = GenerateCalendar(teams);
+                    await SaveMatchResults(calendar);
+                }
+
+                return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Index", "Home");
+            return View("Error");
         }
+
 
 
         // Metodo per visualizzare il calendario
@@ -95,12 +125,12 @@ namespace ChampionshipWebApp.Controllers
             var teams = await _context.Teams.ToListAsync();
             if (teams.Count < 2)
             {
-                ViewBag.Message = "Non ci sono squadre, inseriscine almeno 2.";
+                ViewBag.Message = "There are no teams, please enter at least 2.";
                 return View("Calendar");
             }
             if (teams.Count % 2 != 0)
             {
-                ViewBag.Message = "Il numero delle squadre inserito è dispari, aggiungi almeno un'altra squadra.";
+                ViewBag.Message = "The number of teams entered is odd, add at least one other team.";
                 return View("Calendar");
             }
 
@@ -108,7 +138,7 @@ namespace ChampionshipWebApp.Controllers
             if (!existingMatches)
             {
                 var calendar = GenerateCalendar(teams);
-                await SaveMatchResults(calendar); 
+                await SaveMatchResults(calendar);
             }
 
             var matches = await _context.Matches.Include(m => m.Result).Include(m => m.HomeTeam).Include(m => m.AwayTeam).ToListAsync();
@@ -198,7 +228,8 @@ namespace ChampionshipWebApp.Controllers
             return calendar;
         }
 
-     
+
+
         [HttpPost]
         public IActionResult Rankings()
         {
@@ -272,6 +303,4 @@ namespace ChampionshipWebApp.Controllers
 
     }
 }
-
-
 

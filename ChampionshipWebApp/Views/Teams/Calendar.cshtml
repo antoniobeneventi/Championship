@@ -1,35 +1,32 @@
-﻿@using Championship
-@model List<List<Match>>
+﻿<h2 class="mt-5 text-center">Football League Calendar</h2>
 
-<div class="container">
-    <h1 class="mt-5 text-center">Football League Calendar</h1>
+<div class="alert alert-info" role="alert" style="display:none;" id="loadingSpinner">
+    Loading matches...
+</div>
 
-    @if (ViewBag.Message != null)
-    {
-        <div class="alert alert-warning mt-3">
-            @ViewBag.Message
+@{
+    int matchdayCounter = 1;
+}
+
+
+<div class="text-center mb-4">
+
+    <div class="text-center mb-4">
+        <form asp-action="Rankings" asp-controller="Teams" method="post">
+            <button type="submit" class="btn btn-primary">Generate Rankings</button>
+        </form>
+    </div>
+</div>
+
+@foreach (var day in Model)
+{
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            Matchday @matchdayCounter
         </div>
-    }
-
-    @if (Model != null && Model.Count > 0)
-    {
-       
-        <div class="text-center mb-4">
-         
-            <div class="text-center mb-4">
-                <form asp-action="Rankings" asp-controller="Teams" method="post">
-                    <button type="submit" class="btn btn-primary">Generate Rankings</button>
-                </form>
-            </div>
-        </div>
-
-        <h2 class="mt-5">Calendar</h2>
-
-        @for (int i = 0; i < Model.Count; i++)
-        {
-            <h3 class="mt-3">Matchday @(i + 1)</h3>
-            <table class="table mt-3">
-                <thead>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
                     <tr>
                         <th>Home Team</th>
                         <th>Away Team</th>
@@ -40,32 +37,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var match in Model[i])
+                    @foreach (var match in day)
                     {
                         <tr>
-                            <td>@match.HomeTeamName</td>
-                            <td>@match.AwayTeamName</td>
+                            <td>@match.HomeTeam.SquadName</td>
+                            <td>@match.AwayTeam.SquadName</td>
                             <td>@match.MatchDate.ToShortDateString()</td>
                             <td>@match.StadiumName</td>
                             <td>@match.City</td>
                             <td>
                                 @if (match.Result != null)
                                 {
-                                    <text>@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</text>
+                                    <span class="badge bg-success">@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</span>
                                 }
                                 else
                                 {
-                                    <text>Not Played</text>
+                                    <span class="badge bg-warning">Not Played</span>
                                 }
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        }
-    }
-    else
-    {
-        <p>No matches scheduled.</p>
-    }
-</div>
+        </div>
+    </div>
+
+    matchdayCounter++;
+
+}
+
+

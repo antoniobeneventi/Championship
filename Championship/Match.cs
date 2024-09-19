@@ -44,7 +44,7 @@ public class Match
     public void SetResult(MatchResult result)
     {
         Result = result ?? throw new ArgumentNullException(nameof(result));
-        ResultId = result.Id; // Associa il risultato
+        ResultId = result.Id; 
     }
 
     public override bool Equals(object obj)

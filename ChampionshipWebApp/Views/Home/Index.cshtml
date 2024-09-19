@@ -7,20 +7,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h1, h2 {
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+        }
+
+        .btn-primary, .btn-secondary {
+            font-size: 1.2em;
+            padding: 10px 20px;
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+            .table th {
+                background-color: #343a40;
+                color: white;
+            }
+
+        .btn-sm {
+            font-size: 0.9em;
+        }
+
+        .modal-header {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .container {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .btn-warning, .btn-danger {
+            transition: transform 0.2s ease;
+        }
+
+            .btn-warning:hover, .btn-danger:hover {
+                transform: scale(1.1);
+            }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5 text-center">Football League System</h1>
+        <h1 class="text-center">Football League System</h1>
 
-        <div class="d-flex justify-content-center mt-5">
-            <a href="/AddTeams.html" class="btn btn-primary btn-lg me-3">Add Teams</a>
-            <a href="/Teams/ViewCalendar" class="btn btn-secondary btn-lg">View Calendar</a>
+        <div class="d-flex justify-content-center mt-4">
+            <a href="/AddTeams.html" class="btn btn-primary me-3">Add Teams</a>
+            <a href="/Teams/ViewCalendar" class="btn btn-secondary">View Calendar</a>
         </div>
 
         @if (Model != null && Model.Count > 0)
         {
-            <h2 class="mt-5">List of Teams</h2>
-            <table class="table mt-3">
+            <h2 class="mt-5 text-center">List of Teams</h2>
+            <table class="table table-hover mt-3">
                 <thead>
                     <tr>
                         <th>Squad Name</th>
@@ -28,7 +91,7 @@
                         <th>City</th>
                         <th>Color of Club</th>
                         <th>Stadium Name</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,13 +103,12 @@
                             <td>@team.City</td>
                             <td>@team.ColorOfClub</td>
                             <td>@team.StadiumName</td>
-                            <td>
+                            <td class="text-center">
                                 <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
-                                <form asp-action="Delete" asp-controller="Teams" method="post" style="display:inline;">
+                                <form action="/Teams/Delete" method="post" style="display:inline;">
                                     <input type="hidden" name="squadName" value="@team.SquadName" />
                                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
-
                             </td>
                         </tr>
                     }
@@ -55,10 +117,13 @@
         }
         else
         {
-            <p>No teams have been added yet.</p>
+            <div class="alert alert-warning text-center mt-5" role="alert">
+                No teams have been added yet.
+            </div>
         }
     </div>
 
+    
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -108,3 +173,13 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
