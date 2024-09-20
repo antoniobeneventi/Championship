@@ -1,22 +1,86 @@
-﻿<h2 class="mt-4">Rankings</h2>
+﻿<style>
+    .blue-row {
+        background-color: #007bff; 
+        color: white; 
+    }
+
+    .orange-row {
+        background-color: #ff8800; 
+        color: white; 
+    }
+
+    .green-row {
+        background-color: #28a745; 
+        color: white; 
+    }
+
+    .red-row {
+        background-color: #dc3545; 
+        color: white; 
+    }
+
+    .blue-box {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #007bff; 
+        margin-right: 10px;
+    }
+
+    .orange-box {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #ff8800;
+        margin-right: 10px;
+    }
+
+    .green-box {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #28a745; 
+        margin-right: 10px;
+    }
+
+    .red-box {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #dc3545; 
+        margin-right: 10px;
+    }
+</style>
+
+<h2 class="mt-4">Classifiche</h2>
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
-                <th>Team</th>
-                <th>Games Played</th>
-                <th>Wins</th>
-                <th>Draws</th>
-                <th>Losses</th>
-                <th>Goals For</th>
-                <th>Goals Against</th>
-                <th>Points</th>
+                <th>Squadra</th>
+                <th>Partite Giocate</th>
+                <th>Vittorie</th>
+                <th>Pareggi</th>
+                <th>Sconfitte</th>
+                <th>Gol Fatti</th>
+                <th>Gol Subiti</th>
+                <th>Punti</th>
             </tr>
         </thead>
         <tbody>
+            @{
+                int rank = 1;
+                int totalTeams = Model.Count; 
+            }
             @foreach (var ranking in Model)
             {
-                <tr>
+                var rowClass = rank <= 3 ? "blue-row"
+                : rank == 4 || rank == 5 ? "orange-row"
+                : rank == 6 ? "green-row"
+                : rank > totalTeams - 3 ? "red-row"
+                : "";
+
+                <tr class="@rowClass">
                     <td>@ranking.Key.SquadName</td>
                     <td>@ranking.Value.GamesPlayed</td>
                     <td>@ranking.Value.Wins</td>
@@ -26,16 +90,16 @@
                     <td>@ranking.Value.GoalsAgainst</td>
                     <td>@ranking.Value.Points</td>
                 </tr>
+
+                rank++;
             }
         </tbody>
     </table>
 </div>
 
-
-
-
-
-
-
-
-
+<div class="mt-4">
+    <div class="blue-box"></div> Champions League
+    <div class="orange-box"></div> Europa League
+    <div class="green-box"></div> Conference League
+    <div class="red-box"></div> Relegation Zone
+</div>

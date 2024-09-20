@@ -1,69 +1,70 @@
 ﻿<h2 class="mt-5 text-center">Football League Calendar</h2>
 
-<div class="alert alert-info" role="alert" style="display:none;" id="loadingSpinner">
-    Loading matches...
-</div>
-
-@{
-    int matchdayCounter = 1;
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning text-center">
+        @ViewBag.Message
+    </div>
 }
+else
+{
+    <div class="alert alert-info" role="alert" style="display:none;" id="loadingSpinner">
+        Loading matches...
+    </div>
 
-
-<div class="text-center mb-4">
+    int matchdayCounter = 1;
 
     <div class="text-center mb-4">
         <form asp-action="Rankings" asp-controller="Teams" method="post">
             <button type="submit" class="btn btn-primary">Generate Rankings</button>
         </form>
     </div>
-</div>
 
-@foreach (var day in Model)
-{
-    <div class="card mb-3 shadow-sm">
-        <div class="card-header bg-dark text-white">
-            Matchday @matchdayCounter
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Home Team</th>
-                        <th>Away Team</th>
-                        <th>Date</th>
-                        <th>Stadium</th>
-                        <th>City</th>
-                        <th>Result</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var match in day)
-                    {
+    @foreach (var day in Model)
+    {
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                Matchday @matchdayCounter
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
                         <tr>
-                            <td>@match.HomeTeam.SquadName</td>
-                            <td>@match.AwayTeam.SquadName</td>
-                            <td>@match.MatchDate.ToShortDateString()</td>
-                            <td>@match.StadiumName</td>
-                            <td>@match.City</td>
-                            <td>
-                                @if (match.Result != null)
-                                {
-                                    <span class="badge bg-success">@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning">Not Played</span>
-                                }
-                            </td>
+                            <th>Home Team</th>
+                            <th>Away Team</th>
+                            <th>Date</th>
+                            <th>Stadium</th>
+                            <th>City</th>
+                            <th>Result</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var match in day)
+                        {
+                            <tr>
+                                <td>@match.HomeTeam.SquadName</td>
+                                <td>@match.AwayTeam.SquadName</td>
+                                <td>@match.MatchDate.ToShortDateString()</td>
+                                <td>@match.StadiumName</td>
+                                <td>@match.City</td>
+                                <td>
+                                    @if (match.Result != null)
+                                    {
+                                        <span class="badge bg-success">@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Not Played</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    matchdayCounter++;
-
+        matchdayCounter++;
+    }
 }
-
 

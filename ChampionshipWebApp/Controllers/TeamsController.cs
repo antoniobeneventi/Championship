@@ -171,8 +171,6 @@ namespace ChampionshipWebApp.Controllers
             await _context.SaveChangesAsync();
         }
 
-
-
         private List<List<Match>> GenerateCalendar(List<Team> teams)
         {
             var calendar = new List<List<Match>>();
@@ -303,4 +301,3 @@ namespace ChampionshipWebApp.Controllers
 
     }
 }
-
