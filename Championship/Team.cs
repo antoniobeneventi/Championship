@@ -15,7 +15,6 @@ public class Team
     public string ColorOfClub { get; set; }
     public string StadiumName { get; set; }
 
-  
     public Team() { }
 
     public Team(string squadName, int fondationYear, string city, string colorOfClub, string stadiumName)

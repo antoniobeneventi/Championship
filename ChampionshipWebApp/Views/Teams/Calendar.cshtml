@@ -6,17 +6,22 @@
         @ViewBag.Message
     </div>
 }
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger text-center">
+        @ViewBag.ErrorMessage
+    </div>
+}
 else
 {
-    <div class="alert alert-info" role="alert" style="display:none;" id="loadingSpinner">
-        Loading matches...
-    </div>
-
     int matchdayCounter = 1;
+    <div class="d-flex justify-content-start">
+        <a href="/" class="btn btn-primary row-sm-auto">Back To Home</a>
+    </div>
 
     <div class="text-center mb-4">
         <form asp-action="Rankings" asp-controller="Teams" method="post">
-            <button type="submit" class="btn btn-primary">Generate Rankings</button>
+            <button type="submit" class="btn btn-primary">View Rankings</button>
         </form>
     </div>
 
@@ -35,6 +40,7 @@ else
                             <th>Date</th>
                             <th>Stadium</th>
                             <th>City</th>
+                            <th>Insert/Edit Result</th>
                             <th>Result</th>
                         </tr>
                     </thead>
@@ -48,9 +54,56 @@ else
                                 <td>@match.StadiumName</td>
                                 <td>@match.City</td>
                                 <td>
+                                    @if (match.EditMode == true || match.Result == null)
+                                    {
+                                        <form asp-action="SubmitResult" asp-controller="Teams" method="post">
+                                            <input type="hidden" name="matchId" value="@match.Id" />
+                                            <input type="hidden" name="editMode" value="true" />
+                                            <select name="homeTeamScore">
+                                                @for (int i = 0; i <= 10; i++)
+                                                {
+                                                    if (match.Result != null && match.Result.HomeTeamScore == i)
+                                                    {
+                                                        <option value="@i" selected>@i</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                }
+                                            </select>
+
+                                            <select name="awayTeamScore">
+                                                @for (int i = 0; i <= 10; i++)
+                                                {
+                                                    if (match.Result != null && match.Result.AwayTeamScore == i)
+                                                    {
+                                                        <option value="@i" selected>@i</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                }
+                                            </select>
+
+                                            <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="EditResult" asp-controller="Teams" method="post">
+                                            <input type="hidden" name="matchId" value="@match.Id" />
+                                            <button type="submit" class="btn btn-primary btn-sm">Edit Result</button>
+                                        </form>
+                                    }
+                                </td>
+                                <td>
                                     @if (match.Result != null)
                                     {
-                                        <span class="badge bg-success">@($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")</span>
+                                        <span class="badge bg-success">
+                                            @($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")
+                                        </span>
                                     }
                                     else
                                     {
@@ -63,8 +116,6 @@ else
                 </table>
             </div>
         </div>
-
         matchdayCounter++;
     }
 }
-

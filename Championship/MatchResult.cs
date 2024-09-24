@@ -7,8 +7,8 @@ public class MatchResult
     [Key]
     public int Id { get; set; }
 
-    public int HomeTeamScore { get; private set; } 
-    public int AwayTeamScore { get; private set; } 
+    public int HomeTeamScore { get; set; } 
+    public int AwayTeamScore { get; set; } 
 
     public MatchResult()
     {

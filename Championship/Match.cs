@@ -24,6 +24,8 @@ public class Match
     [NotMapped]
     public string AwayTeamName => AwayTeam?.SquadName;
 
+    [NotMapped]
+    public bool EditMode { get; set; }
     public Match() { }
 
     public Match(Team homeTeam, Team awayTeam, DateTime matchDate, string stadiumName, string city)
