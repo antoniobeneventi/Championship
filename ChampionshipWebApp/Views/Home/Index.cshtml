@@ -93,9 +93,10 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1 class="text-center">Football League </h1>
+        <h1 class="text-center">Football League</h1>
 
         <div class="d-flex justify-content-center mt-4">
             <a href="/AddTeams.html" class="btn btn-primary me-3">Add Teams</a>
@@ -126,10 +127,10 @@
                             <td>@team.ColorOfClub</td>
                             <td>@team.StadiumName</td>
                             <td class="text-center">
-                                <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
-                                <form id="deleteForm-@team.SquadName" action="/Teams/Delete" method="post" style="display:inline;">
+                                <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.Id', '@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
+                                <form id="deleteForm-@team.Id" action="/Teams/Delete" method="post" style="display:inline;">
                                     <input type="hidden" name="squadName" value="@team.SquadName" />
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal('@team.SquadName')">Delete</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal('@team.Id')">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -144,7 +145,6 @@
             </div>
         }
     </div>
-
 
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -177,22 +177,23 @@
                 </div>
                 <div class="modal-body">
                     <form id="editForm" method="post" action="/Teams/Edit">
+                        <input type="hidden" id="EditTeamId" name="Id" />
                         <input type="hidden" id="EditSquadName" name="SquadName" />
                         <div class="form-group">
                             <label for="EditFondationYear">Foundation Year</label>
-                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" min="1857" max="" required />
+                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" maxlength="20" min="1857" max="" required />
                         </div>
                         <div class="form-group">
                             <label for="EditCity">City</label>
-                            <input type="text" class="form-control" id="EditCity" name="City" required pattern="^(?! )[a-zA-Z]+( [a-zA-Z]+)*(?<! )$" title="Only letters and spaces allowed, no leading or trailing spaces.">
+                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z]+( [a-zA-Z]+)*(?<! )$" title="Only letters and spaces allowed, no leading or trailing spaces.">
                         </div>
                         <div class="form-group">
                             <label for="EditColorOfClub">Color of Club</label>
-                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" required pattern="^(?! )[a-zA-Z]+( [a-zA-Z]+)*(?<! )$" title="Only letters and spaces allowed, no leading or trailing spaces.">
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="30" required pattern="^(?! )[a-zA-Z]+( [a-zA-Z]+)*(?<! )$" title="Only letters and spaces allowed, no leading or trailing spaces.">
                         </div>
                         <div class="form-group">
                             <label for="EditStadiumName">Stadium Name</label>
-                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" title="Only letters, numbers, and spaces allowed, no leading or trailing spaces.">
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="30" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" title="Only letters, numbers, and spaces allowed, no leading or trailing spaces.">
                         </div>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
@@ -204,7 +205,8 @@
     <script>
         document.getElementById('EditFondationYear').setAttribute('max', new Date().getFullYear());
 
-        function openEditModal(squadName, fondationYear, city, colorOfClub, stadiumName) {
+        function openEditModal(teamId, squadName, fondationYear, city, colorOfClub, stadiumName) {
+            $('#EditTeamId').val(teamId);
             $('#EditSquadName').val(squadName);
             $('#EditFondationYear').val(fondationYear);
             $('#EditCity').val(city);
@@ -228,12 +230,3 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
