@@ -100,6 +100,25 @@ namespace ChampionshipWebApp.Migrations
                     b.ToTable("Teams", (string)null);
                 });
 
+            modelBuilder.Entity("Championship.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("Championship.Match", b =>
                 {
                     b.HasOne("Championship.Team", "AwayTeam")

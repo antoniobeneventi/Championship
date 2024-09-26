@@ -41,7 +41,7 @@ public class TeamsController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        Log.Error("Errore durante l'aggiunta della squadra. SquadName: {SquadName}, FondationYear: {FondationYear}, City: {City}, ColorOfClub: {ColorOfClub}, StadiumName: {StadiumName}", SquadName, FondationYear, City, ColorOfClub, StadiumName);
+        Log.Error("Error adding the team.. SquadName: {SquadName}, FondationYear: {FondationYear}, City: {City}, ColorOfClub: {ColorOfClub}, StadiumName: {StadiumName}", SquadName, FondationYear, City, ColorOfClub, StadiumName);
         return View("Error");
     }
 
@@ -122,7 +122,6 @@ public class TeamsController : Controller
             return View("Calendar");
         }
 
-        // Log if the number of teams is odd
         if (teams.Count % 2 != 0)
         {
             Log.Error("Odd number of teams found. Number of teams: {TeamCount}", teams.Count);

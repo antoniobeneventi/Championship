@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Error() 
+    .MinimumLevel.Error()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
@@ -15,12 +16,22 @@ builder.Services.AddDbContext<FootballLeagueContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login"; 
+        options.LogoutPath = "/Account/Logout"; 
+    });
+
 var app = builder.Build();
 
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
+app.UseStaticFiles(); 
+app.UseRouting(); 
+app.UseAuthentication(); 
+app.UseAuthorization(); 
 
-app.MapDefaultControllerRoute();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

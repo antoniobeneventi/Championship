@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChampionshipWebApp.Migrations
 {
     [DbContext(typeof(FootballLeagueContext))]
-    [Migration("20240925140559_CreateDatabase")]
+    [Migration("20240926145437_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -101,6 +101,25 @@ namespace ChampionshipWebApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teams", (string)null);
+                });
+
+            modelBuilder.Entity("Championship.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Championship.Match", b =>

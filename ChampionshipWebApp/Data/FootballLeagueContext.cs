@@ -1,4 +1,5 @@
-﻿using Championship;
+﻿
+using Championship;
 using Microsoft.EntityFrameworkCore;
 
 public class FootballLeagueContext : DbContext
@@ -11,6 +12,7 @@ public class FootballLeagueContext : DbContext
     public DbSet<Team> Teams { get; set; }
     public DbSet<Match> Matches { get; set; }
     public DbSet<MatchResult> MatchResults { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,13 +55,3 @@ public class FootballLeagueContext : DbContext
 
 
 }
-
-
-
-
-
-
-
-
-
-
