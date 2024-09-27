@@ -13,37 +13,66 @@ public class TeamsController : Controller
     {
         _context = context;
     }
-    [HttpPost]
-    public async Task<IActionResult> AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
+   [HttpPost]
+public async Task<IActionResult> AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
+{
+    Team existingTeam = null;
+
+    
+
+    if ((existingTeam == null && !await _context.Teams.AnyAsync(t => t.SquadName.ToLower() == SquadName.ToLower())) &&
+        !string.IsNullOrWhiteSpace(SquadName) &&
+        !string.IsNullOrWhiteSpace(City) &&
+        !string.IsNullOrWhiteSpace(ColorOfClub) &&
+        !string.IsNullOrWhiteSpace(StadiumName) &&
+        FondationYear > 0)
     {
-        if (!await _context.Teams.AnyAsync(t => t.SquadName.ToLower() == SquadName.ToLower()) &&
-            !string.IsNullOrWhiteSpace(SquadName) &&
-            !string.IsNullOrWhiteSpace(City) &&
-            !string.IsNullOrWhiteSpace(ColorOfClub) &&
-            !string.IsNullOrWhiteSpace(StadiumName) &&
-            FondationYear > 0)
+        if (existingTeam != null)
         {
-            var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, StadiumName);
+            existingTeam.SquadName = SquadName;
+            existingTeam.FondationYear = FondationYear;
+            existingTeam.City = City;
+            existingTeam.ColorOfClub = ColorOfClub;
+            existingTeam.StadiumName = StadiumName;
+
+            existingTeam.UpdatedAt = DateTime.Now;
+
+            _context.Teams.Update(existingTeam);
+        }
+        else
+        {
+            var newTeam = new Team(SquadName, FondationYear, City, ColorOfClub, StadiumName)
+            {
+                CreatedAt = DateTime.Now, 
+                UpdatedAt = DateTime.Now,  
+                CreatedBy = User.Identity.Name,
+                ModifiedBy = User.Identity.Name
+
+            };
+            
             _context.Teams.Add(newTeam);
-            await _context.SaveChangesAsync();
-
-            var matches = await _context.Matches.ToListAsync();
-            var matchResults = await _context.MatchResults.ToListAsync();
-            _context.Matches.RemoveRange(matches);
-            _context.MatchResults.RemoveRange(matchResults);
-            await _context.SaveChangesAsync();
-
-            var teams = await _context.Teams.ToListAsync();
-            var calendar = GenerateCalendar(teams);
-            await _context.Matches.AddRangeAsync(calendar.SelectMany(matchday => matchday));
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Home");
         }
 
-        Log.Error("Error adding the team.. SquadName: {SquadName}, FondationYear: {FondationYear}, City: {City}, ColorOfClub: {ColorOfClub}, StadiumName: {StadiumName}", SquadName, FondationYear, City, ColorOfClub, StadiumName);
-        return View("Error");
+        await _context.SaveChangesAsync();
+
+        var matches = await _context.Matches.ToListAsync();
+        var matchResults = await _context.MatchResults.ToListAsync();
+        _context.Matches.RemoveRange(matches);
+        _context.MatchResults.RemoveRange(matchResults);
+        await _context.SaveChangesAsync();
+
+        var teams = await _context.Teams.ToListAsync();
+        var calendar = GenerateCalendar(teams);
+        await _context.Matches.AddRangeAsync(calendar.SelectMany(matchday => matchday));
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Index", "Home");
     }
+
+    Log.Error("Error adding or updating the team.. SquadName: {SquadName}, FondationYear: {FondationYear}, City: {City}, ColorOfClub: {ColorOfClub}, StadiumName: {StadiumName}", SquadName, FondationYear, City, ColorOfClub, StadiumName);
+    return View("Error");
+}
+
 
 
     [HttpGet]
@@ -58,28 +87,40 @@ public class TeamsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(Team team)
+    public async Task<IActionResult> Edit(int id, string squadName, int fondationYear, string city, string colorOfClub, string stadiumName)
     {
         if (ModelState.IsValid)
         {
-            var existingTeam = await _context.Teams.FirstOrDefaultAsync(t => t.Id == team.Id);
+            var existingTeam = await _context.Teams.FirstOrDefaultAsync(t => t.Id == id);
             if (existingTeam != null)
             {
-                existingTeam.FondationYear = team.FondationYear;
-                existingTeam.City = team.City;
-                existingTeam.ColorOfClub = team.ColorOfClub;
-                existingTeam.StadiumName = team.StadiumName;
+                bool squadNameExists = await _context.Teams
+                    .AnyAsync(t => t.SquadName.ToLower() == squadName.ToLower() && t.Id != id);
 
+                if (squadNameExists)
+                {
+                    ModelState.AddModelError("SquadName", "The squad name already exists.");
+                    return View(existingTeam);
+                }
+
+                existingTeam.SquadName = squadName;
+                existingTeam.FondationYear = fondationYear;
+                existingTeam.City = city;
+                existingTeam.ColorOfClub = colorOfClub;
+                existingTeam.StadiumName = stadiumName;
+                existingTeam.UpdatedAt = DateTime.Now;
+                existingTeam.ModifiedBy = User.Identity.Name;
+
+                // Update the team in the context
                 _context.Teams.Update(existingTeam);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index", "Home");
             }
-            return View("Error");
+            return View("Error"); 
         }
-        return View(team);
+        return View(); 
     }
-
 
 
     public async Task<IActionResult> Delete(string squadName)

@@ -87,11 +87,11 @@
                     <form id="registrationForm" method="post" asp-action="Register">
                         <div class="form-group">
                             <label for="newUsername">Username</label>
-                            <input type="text" id="newUsername" name="Username" class="form-control" required placeholder="Insert your username">
+                            <input type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required placeholder="Insert your username">
                         </div>
                         <div class="form-group">
                             <label for="newPassword">Password</label>
-                            <input type="password" id="newPassword" name="Password" class="form-control" required placeholder="Insert your password">
+                            <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="Insert your password">
                         </div>
                         <button type="submit" class="btn btn-primary">Registrati</button>
                     </form>
