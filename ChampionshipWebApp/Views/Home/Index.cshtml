@@ -174,10 +174,68 @@
         }
     </div>
 
-    <!-- Modals for delete and edit -->
-    <script>
-        document.getElementById('EditFondationYear').setAttribute('max', new Date().getFullYear());
 
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Team</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="/Teams/Edit" method="post">
+                        <input type="hidden" id="EditTeamId" name="Id" />
+                        <div class="form-group">
+                            <label for="EditSquadName">Squad Name</label>
+                            <input type="text" class="form-control" id="EditSquadName" name="SquadName" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditFondationYear">Foundation Year</label>
+                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" required max="@DateTime.Now.Year" />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCity">City</label>
+                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditColorOfClub">Color of Club</label>
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditStadiumName">Stadium Name</label>
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this team?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
         function openEditModal(teamId, squadName, fondationYear, city, colorOfClub, stadiumName) {
             $('#EditTeamId').val(teamId);
             $('#EditSquadName').val(squadName);
@@ -188,13 +246,10 @@
             $('#editModal').modal('show');
         }
 
-        function openDeleteModal(squadName) {
+        function openDeleteModal(teamId) {
             $('#deleteModal').modal('show');
             $('#confirmDeleteBtn').off('click').on('click', function () {
-                $('#deleteForm-' + squadName).submit();
-            });
-            $('#deleteModal').on('shown.bs.modal', function () {
-                $(this).find('.btn-secondary').focus();
+                $('#deleteForm-' + teamId).submit();
             });
         }
     </script>
@@ -203,4 +258,3 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
