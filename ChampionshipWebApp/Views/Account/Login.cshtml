@@ -1,4 +1,7 @@
 ﻿@model LoginViewModel
+@* @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer *@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Login</title>
+    <title>@Localizer["Login"]</title> <!-- Use localization for title -->
     <style>
         body {
             background-color: #f0f2f5;
@@ -51,33 +54,30 @@
     </header>
 
     <div class="login-container">
-        <h2>Login</h2>
-
-
-
+        <h2>@Localizer["Login"]</h2> <!-- Use localization for the heading -->
         @if (!string.IsNullOrEmpty(ViewBag.RegistrationSuccessMessage))
         {
-            <div class="text-success">@ViewBag.RegistrationSuccessMessage</div>
+            <div class="text-success">@Localizer["Registration Completed Successfully"]</div> <!-- Use localization -->
         }
 
         <form asp-action="Login" method="post">
             <div class="form-group">
-                <label asp-for="Username" class="form-label"></label>
-                <input asp-for="Username" maxlength="30" class="form-control" value="@ViewData["Username"]" placeholder="Insert your username" />
+                <label asp-for="Username" class="form-label">@Localizer["Username"]</label> <!-- Use localization -->
+                <input asp-for="Username" maxlength="30" class="form-control" value="@ViewData["Username"]" placeholder="@Localizer["Username"]" />
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" maxlength="30" type="password" class="form-control" placeholder="Insert your password" />
+                <label asp-for="Password" class="form-label">@Localizer["Password"]</label> <!-- Use localization -->
+                <input asp-for="Password" maxlength="30" type="password" class="form-control" placeholder="@Localizer["Password"]" />
             </div>
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary btn-block btn-space">Login</button>
-                <button type="button" class="btn btn-secondary btn-space" data-toggle="modal" data-target="#registerModal">Register</button>
+                <button type="submit" class="btn btn-primary btn-block btn-space">@Localizer["Login"]</button> <!-- Use localization -->
+                <button type="button" class="btn btn-secondary btn-space" data-toggle="modal" data-target="#registerModal">@Localizer["Register"]</button> <!-- Use localization -->
             </div>
         </form>
 
         @if (!ViewData.ModelState.IsValid)
         {
-            <div class="text-danger">Incorrect credentials, please try again or register if you don't have an account.</div>
+            <div class="text-danger">@Localizer["IncorrectCredentials"]</div> <!-- Use localization -->
         }
 
     </div>
@@ -86,31 +86,32 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                    <h5 class="modal-title" id="registerModalLabel">@Localizer["Register"]</h5> <!-- Use localization -->
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group text-center">
-                        <label for="languageSelect">Select Language:</label>
-                        <select id="languageSelect" class="form-control" style="max-width: 200px; margin: 0 auto;">
-                            <option value="en">English</option>
-                            <option value="it">Italiano</option>
-                        </select>
-                    </div>
                     <form id="registrationForm" method="post" asp-action="Register">
                         <div class="form-group">
-                            <label for="newUsername">Username</label>
-                            <input type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required placeholder="Insert your username">
+                            <label for="newUsername">@Localizer["Username"]</label> <!-- Use localization -->
+                            <input type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required placeholder="@Localizer["Username"]">
                         </div>
                         <div class="form-group">
-                            <label for="newPassword">Password</label>
-                            <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="Insert your password">
-                            <div class="invalid-feedback">Password cannot contain spaces.</div>
+                            <label for="newPassword">@Localizer["Password"]</label> <!-- Use localization -->
+                            <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="@Localizer["Password"]">
+                            <div class="invalid-feedback">@Localizer["RegistrationError"]</div> <!-- Use localization -->
                         </div>
 
-                        <button type="submit" class="btn btn-primary" id="registerButton">Register</button>
+                        <div class="form-group">
+                            <label for="languageSelect">@Localizer["SelectLanguage"]</label> <!-- Use localization -->
+                            <select id="languageSelect" name="SelectedLanguage" class="form-control">
+                                <option value="en">English</option>
+                                <option value="it">Italiano</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="registerButton">@Localizer["RegisterButton"]</button> <!-- Use localization -->
                     </form>
 
                     @if (!string.IsNullOrEmpty(ViewBag.RegistrationError))
@@ -120,7 +121,7 @@
 
                     @if (!string.IsNullOrEmpty(ViewBag.UsernameInUseMessage))
                     {
-                        <div class="text-danger mt-2" id="usernameInUseMessage">@ViewBag.UsernameInUseMessage</div>
+                        <div class="text-danger mt-2">@ViewBag.UsernameInUseMessage</div>
                     }
                 </div>
             </div>
@@ -140,7 +141,7 @@
             // Nascondi il messaggio di errore quando il modale viene chiuso
             $('#registerModal').on('hidden.bs.modal', function () {
                 $('#registrationMessage').text('');  // Rimuovi il testo di errore
-                $('#usernameInUseMessage').text(''); // Rimuovi il testo di errore
+                $('#usernameInUseMessage').text('');
                 $('#newPassword').removeClass('is-invalid');
                 $('#registerButton').prop('disabled', false);
             });
@@ -149,7 +150,7 @@
                 var password = $(this).val();
                 if (/\s/.test(password)) {
                     $(this).addClass('is-invalid');
-                    $('.invalid-feedback').text('Password cannot contain spaces.');
+                    $('.invalid-feedback').text('@Localizer["RegistrationError"]'); // Use localization
                     $('#registerButton').prop('disabled', true);
                 } else {
                     $(this).removeClass('is-invalid');
@@ -161,3 +162,4 @@
 
 </body>
 </html>
+

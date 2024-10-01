@@ -16,12 +16,14 @@ public class AccountController : Controller
         _context = context;
     }
 
-    public IActionResult Login(string? registrationSuccessMessage = null)
+    // Azione Login
+    public IActionResult Login(string registrationSuccessMessage = null)
     {
         ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
         return View();
     }
 
+    // Azione Login POST
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
@@ -38,9 +40,12 @@ public class AccountController : Controller
         }
 
         ModelState.AddModelError(string.Empty, "Tentativo di login non valido.");
-        ViewData["Username"] = username;  // Store the entered username to keep it in the form
+        ViewData["Username"] = username;
         return View();
     }
+
+
+
 
 
     [HttpPost]
@@ -51,19 +56,18 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    public async Task<IActionResult> Register(RegisterViewModel model, string selectedLanguage)
     {
         if (ModelState.IsValid)
         {
             var existingUser = await _context.Users
                                              .FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
 
-            if (existingUser is not null)
+            if (existingUser != null)
             {
                 ViewBag.UsernameInUseMessage = "The username is already in use. Please try again with another one.";
                 ViewBag.ShowRegisterModal = true;
                 return View("Login");
-
             }
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
@@ -72,6 +76,12 @@ public class AccountController : Controller
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(selectedLanguage)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
             return RedirectToAction("Login", new { registrationSuccessMessage = "Registration completed successfully!" });
         }
 
@@ -79,18 +89,4 @@ public class AccountController : Controller
         return View("Login");
     }
 
-    [HttpPost]
-    public IActionResult SetLanguage(string culture)
-    {
-        Response.Cookies.Append(
-            CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-        );
-
-        return RedirectToAction("Login"); 
-    }
-
 }
-
-

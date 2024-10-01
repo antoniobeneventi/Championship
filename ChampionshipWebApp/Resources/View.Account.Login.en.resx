@@ -118,33 +118,33 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectCredentials" xml:space="preserve">
-    <value>Credenziali errate, riprova o registrati se non hai un account.</value>
+    <value>Incorrect credentials, please try again or register if you don't have an account</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>Registrati</value>
+    <value>Register</value>
   </data>
   <data name="RegisterButton" xml:space="preserve">
-    <value>Registrati</value>
+    <value>Register</value>
+  </data>
+  <data name="Registration completed successfully" xml:space="preserve">
+    <value>Registration completed successfully!</value>
   </data>
   <data name="RegistrationError" xml:space="preserve">
-    <value>Errore di registrazione.</value>
+    <value>Registration Error</value>
   </data>
-  <data name="RegistrationSuccessMessage" xml:space="preserve">
-    <value>Registrazione riuscita!</value>
-  </data>
-  <data name="SelectLanguage" xml:space="preserve">
-    <value>Seleziona Lingua:</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Accesso</value>
+  <data name="SelectLenguage" xml:space="preserve">
+    <value>Select Lenguage</value>
   </data>
   <data name="Username" xml:space="preserve">
-    <value>Nome utente</value>
+    <value>Username</value>
   </data>
   <data name="UsernameInUseMessage" xml:space="preserve">
-    <value>Nome utente già in uso. Prova con un altro.</value>
+    <value>try a different one</value>
   </data>
 </root>
