@@ -1,4 +1,5 @@
-﻿@model List<Championship.Team>
+﻿
+@model List<Championship.Team>
 @using Microsoft.AspNetCore.Authentication;
 @using Microsoft.AspNetCore.Authentication.Cookies;
 @using System.Security.Claims;
@@ -95,6 +96,12 @@
         .dropdown-menu {
             font-size: 1.1em;
         }
+
+        .custom-cancel-btn {
+            font-size: 0.8em; 
+            padding: 10px 12px; 
+            margin-right: 10px;
+        }
     </style>
 </head>
 
@@ -134,10 +141,6 @@
                         <th>City</th>
                         <th>Color of Club</th>
                         <th>Stadium Name</th>
-                        <th>Added On</th>
-                        <th>Last Modified</th>
-                        <th>Added By</th>
-                        <th>Modified By</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -150,11 +153,7 @@
                             <td>@team.City</td>
                             <td>@team.ColorOfClub</td>
                             <td>@team.StadiumName</td>
-                            <td>@team.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@team.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@team.CreatedBy</td>
-                            <td>@team.ModifiedBy</td>
-                            <td class="text-center">
+                           <td class="text-center">
                                 <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.Id', '@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
                                 <form id="deleteForm-@team.Id" action="/Teams/Delete" method="post" style="display:inline;">
                                     <input type="hidden" name="squadName" value="@team.SquadName" />
@@ -174,7 +173,6 @@
         }
     </div>
 
-
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -189,6 +187,7 @@
                         <input type="hidden" id="EditTeamId" name="Id" />
                         <div class="form-group">
                             <label for="EditSquadName">Squad Name</label>
+
                             <input type="text" class="form-control" id="EditSquadName" name="SquadName" readonly />
                         </div>
                         <div class="form-group">
@@ -197,23 +196,23 @@
                         </div>
                         <div class="form-group">
                             <label for="EditCity">City</label>
-                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
                         <div class="form-group">
                             <label for="EditColorOfClub">Color of Club</label>
-                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="40" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
                         <div class="form-group">
                             <label for="EditStadiumName">Stadium Name</label>
-                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" />
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
+                        <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="resetEditForm()">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -236,14 +235,31 @@
     </div>
 
     <script>
+        let originalSquadName, originalFondationYear, originalCity, originalColorOfClub, originalStadiumName;
+
         function openEditModal(teamId, squadName, fondationYear, city, colorOfClub, stadiumName) {
+            originalSquadName = squadName;
+            originalFondationYear = fondationYear;
+            originalCity = city;
+            originalColorOfClub = colorOfClub;
+            originalStadiumName = stadiumName;
+
             $('#EditTeamId').val(teamId);
             $('#EditSquadName').val(squadName);
             $('#EditFondationYear').val(fondationYear);
             $('#EditCity').val(city);
             $('#EditColorOfClub').val(colorOfClub);
             $('#EditStadiumName').val(stadiumName);
+
             $('#editModal').modal('show');
+        }
+
+        function resetEditForm() {
+            $('#EditSquadName').val(originalSquadName);
+            $('#EditFondationYear').val(originalFondationYear);
+            $('#EditCity').val(originalCity);
+            $('#EditColorOfClub').val(originalColorOfClub);
+            $('#EditStadiumName').val(originalStadiumName);
         }
 
         function openDeleteModal(teamId) {
@@ -254,7 +270,15 @@
         }
     </script>
 
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+

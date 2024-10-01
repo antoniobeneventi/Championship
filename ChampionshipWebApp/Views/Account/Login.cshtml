@@ -53,6 +53,8 @@
     <div class="login-container">
         <h2>Login</h2>
 
+
+
         @if (!string.IsNullOrEmpty(ViewBag.RegistrationSuccessMessage))
         {
             <div class="text-success">@ViewBag.RegistrationSuccessMessage</div>
@@ -77,6 +79,7 @@
         {
             <div class="text-danger">Incorrect credentials, please try again or register if you don't have an account.</div>
         }
+
     </div>
 
     <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
@@ -89,6 +92,13 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group text-center">
+                        <label for="languageSelect">Select Language:</label>
+                        <select id="languageSelect" class="form-control" style="max-width: 200px; margin: 0 auto;">
+                            <option value="en">English</option>
+                            <option value="it">Italiano</option>
+                        </select>
+                    </div>
                     <form id="registrationForm" method="post" asp-action="Register">
                         <div class="form-group">
                             <label for="newUsername">Username</label>
@@ -97,10 +107,21 @@
                         <div class="form-group">
                             <label for="newPassword">Password</label>
                             <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="Insert your password">
+                            <div class="invalid-feedback">Password cannot contain spaces.</div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
+
+                        <button type="submit" class="btn btn-primary" id="registerButton">Register</button>
                     </form>
-                    <div id="registrationMessage" class="text-danger mt-2"></div>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.RegistrationError))
+                    {
+                        <div class="text-danger mt-2" id="registrationMessage">@ViewBag.RegistrationError</div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(ViewBag.UsernameInUseMessage))
+                    {
+                        <div class="text-danger mt-2" id="usernameInUseMessage">@ViewBag.UsernameInUseMessage</div>
+                    }
                 </div>
             </div>
         </div>
@@ -108,5 +129,35 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
+            if (showRegisterModal === 'True') {
+                $('#registerModal').modal('show');
+            }
+
+            // Nascondi il messaggio di errore quando il modale viene chiuso
+            $('#registerModal').on('hidden.bs.modal', function () {
+                $('#registrationMessage').text('');  // Rimuovi il testo di errore
+                $('#usernameInUseMessage').text(''); // Rimuovi il testo di errore
+                $('#newPassword').removeClass('is-invalid');
+                $('#registerButton').prop('disabled', false);
+            });
+
+            $('#newPassword').on('input', function () {
+                var password = $(this).val();
+                if (/\s/.test(password)) {
+                    $(this).addClass('is-invalid');
+                    $('.invalid-feedback').text('Password cannot contain spaces.');
+                    $('#registerButton').prop('disabled', true);
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $('#registerButton').prop('disabled', false);
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
