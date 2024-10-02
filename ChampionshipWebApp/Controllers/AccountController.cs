@@ -1,5 +1,4 @@
 ﻿
-
 using Championship;
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -41,7 +40,7 @@ public class AccountController : Controller
 
     // POST action for Login
     [HttpPost]
-    public async Task<IActionResult> Login(string username, string password)
+    public async Task<IActionResult> Login(string username, string password, string culture = "en")
     {
         var user = await _context.Users
                                  .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
@@ -55,8 +54,10 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        ModelState.AddModelError(string.Empty, "Tentativo di login non valido.");
+        ModelState.AddModelError(string.Empty,
+            culture == "it" ? "Tentativo di login non valido." : "Invalid login attempt.");
         ViewData["Username"] = username;
+        ViewData["Culture"] = culture; // Preserve the culture
         return View();
     }
 
@@ -70,31 +71,35 @@ public class AccountController : Controller
 
     // POST action for Register
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    public async Task<IActionResult> Register(RegisterViewModel model, string culture = "en")
     {
         if (ModelState.IsValid)
         {
             var existingUser = await _context.Users
                                              .FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
 
-            if (existingUser is not null)
+            if (existingUser != null)
             {
-                ViewBag.UsernameInUseMessage = "The username is already in use. Please try again with another one.";
+                ViewBag.UsernameInUseMessage = culture == "it"
+                    ? "Il nome utente è già in uso. Si prega di riprovare con un altro."
+                    : "The username is already in use. Please try again with another one.";
                 ViewBag.ShowRegisterModal = true;
+                ViewData["Culture"] = culture; // Preserve the culture
                 return View("Login");
             }
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            var user = new User { Username = model.Username, Password = hashedPassword };
+            var user = new User { Username = model.Username, Password = hashedPassword, Language = model.Language }; // Store the language
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Login", new { registrationSuccessMessage = "Registration completed successfully!" });
+            return RedirectToAction("Login", new { registrationSuccessMessage = "Registration completed successfully!", culture });
         }
 
         ViewBag.ShowRegisterModal = true;
+        ViewData["Culture"] = culture; // Preserve the culture
         return View("Login");
     }
-}
 
+}

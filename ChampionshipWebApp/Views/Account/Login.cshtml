@@ -75,6 +75,7 @@
         }
 
         <form asp-action="Login" method="post">
+            <input type="hidden" name="culture" value="@currentCulture" />
             <div class="form-group">
                 <label asp-for="Username" class="form-label">
                     @(currentCulture == "it" ? "Nome Utente" : "Username")
@@ -89,6 +90,8 @@
                 <input asp-for="Password" maxlength="30" type="password" class="form-control"
                        placeholder="@(currentCulture == "it" ? "Inserisci la tua password" : "Insert your password")" />
             </div>
+
+            <input type="hidden" name="culture" value="@currentCulture" />
             <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary btn-block btn-space">
                     @(currentCulture == "it" ? "Accedi" : "Login")
@@ -121,6 +124,15 @@
                 <div class="modal-body">
                     <form id="registrationForm" method="post" asp-action="Register">
                         <div class="form-group">
+                            <label for="languageSelect">
+                                @(currentCulture == "it" ? "Seleziona Lingua" : "Select Language")
+                            </label>
+                            <div>
+                                <input type="radio" id="languageEnglish" name="Language" value="en" @(currentCulture == "en" ? "checked" : "") required>
+                                <label for="languageEnglish">English</label>
+                                <input type="radio" id="languageItalian" name="Language" value="it" @(currentCulture == "it" ? "checked" : "") required>
+                                <label for="languageItalian">Italiano</label>
+                            </div>
                             <label for="newUsername">
                                 @(currentCulture == "it" ? "Nome Utente" : "Username")
                             </label>
@@ -195,3 +207,5 @@
 
 </body>
 </html>
+
+

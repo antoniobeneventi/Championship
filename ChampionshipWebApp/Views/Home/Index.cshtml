@@ -1,7 +1,10 @@
-﻿@model List<Championship.Team>
+﻿@using ChampionshipWebApp.Resources
+
+@model List<Championship.Team>
 @using Microsoft.AspNetCore.Authentication;
 @using Microsoft.AspNetCore.Authentication.Cookies;
 @using System.Security.Claims;
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,7 +113,7 @@
             <div>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <h5>Welcome, @User.Identity.Name!</h5>
+                    <h5>@string.Format(Resources.WelcomeMessage, User.Identity.Name)</h5>
                 }
             </div>
             <div>
@@ -122,16 +125,16 @@
                 }
             </div>
         </div>
-        <h1 class="text-center">Football League</h1>
+        <h1 class="text-center">@string.Format(Resources.FootballLeague)</h1>
 
         <div class="d-flex justify-content-center mt-4">
             <a href="/AddTeams.html" class="btn btn-primary me-3">Add Teams</a>
             <a href="/Teams/ViewCalendar" class="btn btn-secondary">Generate Calendar</a>
         </div>
-
+        
         @if (Model != null && Model.Count > 0)
         {
-            <h2 class="mt-5 text-center">List of Teams</h2>
+            <h2 class="mt-5 text-center">@string.Format(Resources.ListOfTeams)</h2>
             <table class="table table-hover mt-3">
                 <thead>
                     <tr>
@@ -140,11 +143,7 @@
                         <th>City</th>
                         <th>Color of Club</th>
                         <th>Stadium Name</th>
-                        @* <th>Added On</th>
-                    <th>Last Modified</th>
-                    <th>Added By</th>
-                    <th>Modified By</th> *@
-                        <th class="text-center">Actions</th>
+                       <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,12 +155,8 @@
                             <td>@team.City</td>
                             <td>@team.ColorOfClub</td>
                             <td>@team.StadiumName</td>
-                            @*  <td>@team.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@team.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@team.CreatedBy</td>
-                    <td>@team.UpdateBy</td> *@
                             <td class="text-center">
-                                <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.Id', '@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
+                                <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.Id', '@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">@string.Format(Resources.EditTeam)</button>
                                 <form id="deleteForm-@team.Id" action="/Teams/Delete" method="post" style="display:inline;">
                                     <input type="hidden" name="squadName" value="@team.SquadName" />
                                     <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal('@team.Id')">Delete</button>
