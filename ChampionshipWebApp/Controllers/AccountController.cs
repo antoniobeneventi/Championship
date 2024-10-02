@@ -1,11 +1,13 @@
-﻿using Championship;
+﻿
+
+using Championship;
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
 
 public class AccountController : Controller
 {
@@ -16,14 +18,28 @@ public class AccountController : Controller
         _context = context;
     }
 
-    // Azione Login
+    // Action for Login
     public IActionResult Login(string registrationSuccessMessage = null)
     {
         ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
+        ViewData["Culture"] = HttpContext.Request.Query["culture"].ToString() ?? "en";
         return View();
     }
 
-    // Azione Login POST
+    // Action for Language Change
+    [HttpGet]
+    public IActionResult ChangeLanguage(string culture)
+    {
+        Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+        );
+
+        return RedirectToAction("Login");
+    }
+
+    // POST action for Login
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
@@ -44,10 +60,7 @@ public class AccountController : Controller
         return View();
     }
 
-
-
-
-
+    // POST action for Logout
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
@@ -55,15 +68,16 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    // POST action for Register
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model, string selectedLanguage)
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (ModelState.IsValid)
         {
             var existingUser = await _context.Users
                                              .FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
 
-            if (existingUser != null)
+            if (existingUser is not null)
             {
                 ViewBag.UsernameInUseMessage = "The username is already in use. Please try again with another one.";
                 ViewBag.ShowRegisterModal = true;
@@ -76,17 +90,11 @@ public class AccountController : Controller
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(selectedLanguage)),
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-            );
-
             return RedirectToAction("Login", new { registrationSuccessMessage = "Registration completed successfully!" });
         }
 
         ViewBag.ShowRegisterModal = true;
         return View("Login");
     }
-
 }
+

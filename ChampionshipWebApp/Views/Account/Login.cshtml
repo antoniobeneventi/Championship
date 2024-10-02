@@ -1,15 +1,15 @@
 ﻿@model LoginViewModel
-@* @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer *@
-@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+@{
+    var currentCulture = ViewData["Culture"]?.ToString() ?? "en";
+}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@currentCulture">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>@Localizer["Login"]</title> <!-- Use localization for title -->
+    <title>@(currentCulture == "it" ? "Accesso" : "Login")</title>
     <style>
         body {
             background-color: #f0f2f5;
@@ -45,7 +45,20 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm fixed-top">
             <div class="container-fluid">
                 <h2 style="color:white">ChampionshipWebApp</h2>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <div class="ml-auto">
+                    <div class="form-group">
+                        <label for="languageSelect" class="mr-2" style="color:white">
+                            @(currentCulture == "it" ? "Seleziona Lingua" : "Select Language")
+                        </label>
+                        <div style="display: inline-block; width: auto;">
+                            <input type="radio" id="languageEnglish" name="language" value="en" @(currentCulture == "en" ? "checked" : "") onclick="changeLanguage('en')">
+                            <label for="languageEnglish" style="color:white">English</label>
+                            <input type="radio" id="languageItalian" name="language" value="it" @(currentCulture == "it" ? "checked" : "") onclick="changeLanguage('it')">
+                            <label for="languageItalian" style="color:white">Italiano</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -54,39 +67,53 @@
     </header>
 
     <div class="login-container">
-        <h2>@Localizer["Login"]</h2> <!-- Use localization for the heading -->
+        <h2>@(currentCulture == "it" ? "Accesso" : "Login")</h2>
+
         @if (!string.IsNullOrEmpty(ViewBag.RegistrationSuccessMessage))
         {
-            <div class="text-success">@Localizer["Registration Completed Successfully"]</div> <!-- Use localization -->
+            <div class="text-success">@ViewBag.RegistrationSuccessMessage</div>
         }
 
         <form asp-action="Login" method="post">
             <div class="form-group">
-                <label asp-for="Username" class="form-label">@Localizer["Username"]</label> <!-- Use localization -->
-                <input asp-for="Username" maxlength="30" class="form-control" value="@ViewData["Username"]" placeholder="@Localizer["Username"]" />
+                <label asp-for="Username" class="form-label">
+                    @(currentCulture == "it" ? "Nome Utente" : "Username")
+                </label>
+                <input asp-for="Username" maxlength="30" class="form-control" value="@ViewData["Username"]"
+                       placeholder="@(currentCulture == "it" ? "Inserisci il tuo nome utente" : "Insert your username")" />
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="form-label">@Localizer["Password"]</label> <!-- Use localization -->
-                <input asp-for="Password" maxlength="30" type="password" class="form-control" placeholder="@Localizer["Password"]" />
+                <label asp-for="Password" class="form-label">
+                    @(currentCulture == "it" ? "Password" : "Password")
+                </label>
+                <input asp-for="Password" maxlength="30" type="password" class="form-control"
+                       placeholder="@(currentCulture == "it" ? "Inserisci la tua password" : "Insert your password")" />
             </div>
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary btn-block btn-space">@Localizer["Login"]</button> <!-- Use localization -->
-                <button type="button" class="btn btn-secondary btn-space" data-toggle="modal" data-target="#registerModal">@Localizer["Register"]</button> <!-- Use localization -->
+                <button type="submit" class="btn btn-primary btn-block btn-space">
+                    @(currentCulture == "it" ? "Accedi" : "Login")
+                </button>
+                <button type="button" class="btn btn-secondary btn-space" data-toggle="modal" data-target="#registerModal">
+                    @(currentCulture == "it" ? "Registrazione" : "Registration")
+                </button>
             </div>
         </form>
 
         @if (!ViewData.ModelState.IsValid)
         {
-            <div class="text-danger">@Localizer["IncorrectCredentials"]</div> <!-- Use localization -->
+            <div class="text-danger">
+                @(currentCulture == "it" ? "Credenziali errate, riprova o registrati se non hai un account." : "Incorrect credentials, please try again or register if you don't have an account.")
+            </div>
         }
-
     </div>
 
     <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">@Localizer["Register"]</h5> <!-- Use localization -->
+                    <h5 class="modal-title" id="registerModalLabel">
+                        @(currentCulture == "it" ? "Registrati" : "Register")
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -94,24 +121,26 @@
                 <div class="modal-body">
                     <form id="registrationForm" method="post" asp-action="Register">
                         <div class="form-group">
-                            <label for="newUsername">@Localizer["Username"]</label> <!-- Use localization -->
-                            <input type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required placeholder="@Localizer["Username"]">
+                            <label for="newUsername">
+                                @(currentCulture == "it" ? "Nome Utente" : "Username")
+                            </label>
+                            <input type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required
+                                   placeholder="@(currentCulture == "it" ? "Inserisci il tuo nome utente" : "Insert your username")">
                         </div>
                         <div class="form-group">
-                            <label for="newPassword">@Localizer["Password"]</label> <!-- Use localization -->
-                            <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="@Localizer["Password"]">
-                            <div class="invalid-feedback">@Localizer["RegistrationError"]</div> <!-- Use localization -->
+                            <label for="newPassword">
+                                @(currentCulture == "it" ? "Password" : "Password")
+                            </label>
+                            <input type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required
+                                   placeholder="@(currentCulture == "it" ? "Inserisci la tua password" : "Insert your password")">
+                            <div class="invalid-feedback">
+                                @(currentCulture == "it" ? "La password non può contenere spazi." : "Password cannot contain spaces.")
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="languageSelect">@Localizer["SelectLanguage"]</label> <!-- Use localization -->
-                            <select id="languageSelect" name="SelectedLanguage" class="form-control">
-                                <option value="en">English</option>
-                                <option value="it">Italiano</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="registerButton">@Localizer["RegisterButton"]</button> <!-- Use localization -->
+                        <button type="submit" class="btn btn-primary" id="registerButton">
+                            @(currentCulture == "it" ? "Registrati" : "Register")
+                        </button>
                     </form>
 
                     @if (!string.IsNullOrEmpty(ViewBag.RegistrationError))
@@ -121,7 +150,7 @@
 
                     @if (!string.IsNullOrEmpty(ViewBag.UsernameInUseMessage))
                     {
-                        <div class="text-danger mt-2">@ViewBag.UsernameInUseMessage</div>
+                        <div class="text-danger mt-2" id="usernameInUseMessage">@ViewBag.UsernameInUseMessage</div>
                     }
                 </div>
             </div>
@@ -132,6 +161,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        function changeLanguage(culture) {
+            window.location.href = '/Account/Login?culture=' + culture;
+        }
+
         $(document).ready(function () {
             var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
             if (showRegisterModal === 'True') {
@@ -150,7 +183,7 @@
                 var password = $(this).val();
                 if (/\s/.test(password)) {
                     $(this).addClass('is-invalid');
-                    $('.invalid-feedback').text('@Localizer["RegistrationError"]'); // Use localization
+                    $('.invalid-feedback').text('@(currentCulture == "it" ? "La password non può contenere spazi." : "Password cannot contain spaces.")');
                     $('#registerButton').prop('disabled', true);
                 } else {
                     $(this).removeClass('is-invalid');
@@ -162,4 +195,3 @@
 
 </body>
 </html>
-

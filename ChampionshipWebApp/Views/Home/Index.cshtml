@@ -1,5 +1,4 @@
-﻿
-@model List<Championship.Team>
+﻿@model List<Championship.Team>
 @using Microsoft.AspNetCore.Authentication;
 @using Microsoft.AspNetCore.Authentication.Cookies;
 @using System.Security.Claims;
@@ -98,8 +97,8 @@
         }
 
         .custom-cancel-btn {
-            font-size: 0.8em; 
-            padding: 10px 12px; 
+            font-size: 0.8em;
+            padding: 10px 12px;
             margin-right: 10px;
         }
     </style>
@@ -141,6 +140,10 @@
                         <th>City</th>
                         <th>Color of Club</th>
                         <th>Stadium Name</th>
+                        @* <th>Added On</th>
+                    <th>Last Modified</th>
+                    <th>Added By</th>
+                    <th>Modified By</th> *@
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -153,7 +156,11 @@
                             <td>@team.City</td>
                             <td>@team.ColorOfClub</td>
                             <td>@team.StadiumName</td>
-                           <td class="text-center">
+                            @*  <td>@team.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@team.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@team.CreatedBy</td>
+                    <td>@team.UpdateBy</td> *@
+                            <td class="text-center">
                                 <button class="btn btn-warning btn-sm" onclick="openEditModal('@team.Id', '@team.SquadName', '@team.FondationYear', '@team.City', '@team.ColorOfClub', '@team.StadiumName')">Edit</button>
                                 <form id="deleteForm-@team.Id" action="/Teams/Delete" method="post" style="display:inline;">
                                     <input type="hidden" name="squadName" value="@team.SquadName" />
@@ -173,6 +180,7 @@
         }
     </div>
 
+    <!-- Modal per la modifica -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -214,6 +222,7 @@
         </div>
     </div>
 
+    <!--Modal per la cancellazione -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -235,14 +244,17 @@
     </div>
 
     <script>
+
         let originalSquadName, originalFondationYear, originalCity, originalColorOfClub, originalStadiumName;
 
         function openEditModal(teamId, squadName, fondationYear, city, colorOfClub, stadiumName) {
+
             originalSquadName = squadName;
             originalFondationYear = fondationYear;
             originalCity = city;
             originalColorOfClub = colorOfClub;
             originalStadiumName = stadiumName;
+
 
             $('#EditTeamId').val(teamId);
             $('#EditSquadName').val(squadName);
@@ -254,6 +266,7 @@
             $('#editModal').modal('show');
         }
 
+        // Funzione per ripristinare i campi ai valori originali
         function resetEditForm() {
             $('#EditSquadName').val(originalSquadName);
             $('#EditFondationYear').val(originalFondationYear);

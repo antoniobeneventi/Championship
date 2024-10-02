@@ -1,12 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Localization; // Required for localization
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Serilog for logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Error()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -14,26 +14,17 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Configure the DbContext
 builder.Services.AddDbContext<FootballLeagueContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("FootballLeagueDatabase")));
 
-// Configure cookie authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-    });
+builder.Services.AddControllersWithViews();
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-// Configure request localization options
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedCultures = new[]
+    var supportedCultures = new List<CultureInfo>
     {
         new CultureInfo("en"),
         new CultureInfo("it")
@@ -42,36 +33,29 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.DefaultRequestCulture = new RequestCulture("en");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
-
-    // Set culture based on cookie
-    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
-// Add services for controllers with views and enable view localization
-builder.Services.AddControllersWithViews()
-    .AddViewLocalization()
-    .AddDataAnnotationsLocalization();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+    });
 
 var app = builder.Build();
 
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
 app.UseStaticFiles();
 app.UseRouting();
-
-app.UseRequestLocalization(); // Enable localization middleware
-app.UseAuthentication(); // Enable authentication
+app.UseAuthentication();
 app.UseAuthorization();
 
-// Modify the default route to point to the login page
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
-
-
-
-
-
 
 
 
