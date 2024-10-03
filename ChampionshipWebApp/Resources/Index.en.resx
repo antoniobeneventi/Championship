@@ -135,6 +135,12 @@
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel Button</value>
   </data>
+  <data name="ChangeLanguage" xml:space="preserve">
+    <value>Change Language</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
   <data name="City" xml:space="preserve">
     <value>City</value>
   </data>
@@ -162,11 +168,17 @@
   <data name="Draws" xml:space="preserve">
     <value>Draws</value>
   </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>Edit Account</value>
+  </data>
   <data name="EditResult" xml:space="preserve">
     <value>Edit Result</value>
   </data>
   <data name="EditTeam" xml:space="preserve">
     <value>Edit Team</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
   </data>
   <data name="FewTeams" xml:space="preserve">
     <value>There are not enough teams or the teams are odd</value>
@@ -198,6 +210,9 @@
   <data name="InsertEditResult" xml:space="preserve">
     <value>Insert Edit Result</value>
   </data>
+  <data name="Italian" xml:space="preserve">
+    <value>Italian</value>
+  </data>
   <data name="ListOfTeams" xml:space="preserve">
     <value>List of Teams</value>
   </data>
@@ -227,6 +242,9 @@
   </data>
   <data name="SaveChanges" xml:space="preserve">
     <value>SaveChanges</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Select Language</value>
   </data>
   <data name="SquadName" xml:space="preserve">
     <value>Squad Name</value>

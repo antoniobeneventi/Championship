@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using System.Security.Claims;
 
 public class AccountController : Controller
 {
@@ -33,19 +32,37 @@ public class AccountController : Controller
         return View();
     }
 
-
-
-    [HttpGet]
-    public IActionResult ChangeLanguage(string culture)
+    [HttpPost]
+    public async Task<IActionResult> ChangeLanguage(string language)
     {
-        Response.Cookies.Append(
-            CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-        );
+        if (language == "en" || language == "it")
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            var claim = identity.FindFirst("Language");
 
-        return RedirectToAction("Login");
+            if (claim != null)
+            {
+                identity.RemoveClaim(claim);
+            }
+
+            identity.AddClaim(new Claim("Language", language));
+
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
+            var username = User.Identity.Name;
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user != null)
+            {
+                user.Language = language; 
+                await _context.SaveChangesAsync(); 
+            }
+        }
+
+        return Ok();
     }
+
 
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
@@ -55,17 +72,17 @@ public class AccountController : Controller
 
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
-            var userPreferredCulture = user.Language ?? "en"; 
+            var userPreferredCulture = user.Language ?? "en";
 
             var cultureInfo = new CultureInfo(userPreferredCulture);
             CultureInfo.CurrentCulture = cultureInfo;
             CultureInfo.CurrentUICulture = cultureInfo;
 
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim("Language", userPreferredCulture) 
-        };
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim("Language", userPreferredCulture)
+            };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
@@ -82,7 +99,6 @@ public class AccountController : Controller
 
         return View();
     }
-
 
     [HttpPost]
     public async Task<IActionResult> Logout()
@@ -105,7 +121,7 @@ public class AccountController : Controller
                     ? "Il nome utente è già in uso. Si prega di riprovare con un altro."
                     : "The username is already in use. Please try again with another one.";
                 ViewBag.ShowRegisterModal = true;
-                ViewData["Culture"] = culture; 
+                ViewData["Culture"] = culture;
                 return View("Login");
             }
 
@@ -127,8 +143,7 @@ public class AccountController : Controller
         }
 
         ViewBag.ShowRegisterModal = true;
-        ViewData["Culture"] = culture; 
+        ViewData["Culture"] = culture;
         return View("Login");
     }
-
 }

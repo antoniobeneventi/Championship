@@ -135,6 +135,12 @@
   <data name="CancelButton" xml:space="preserve">
     <value>Cancella</value>
   </data>
+  <data name="ChangeLanguage" xml:space="preserve">
+    <value>Cambia Lingua</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambia Password</value>
+  </data>
   <data name="City" xml:space="preserve">
     <value>Città</value>
   </data>
@@ -165,11 +171,17 @@
   <data name="Draws" xml:space="preserve">
     <value>Pareggi</value>
   </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>Modifica Account</value>
+  </data>
   <data name="EditResult" xml:space="preserve">
     <value>Modifica Risultato</value>
   </data>
   <data name="EditTeam" xml:space="preserve">
     <value>Modifica squadra</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Inglese</value>
   </data>
   <data name="FewTeams" xml:space="preserve">
     <value>Non ci sono abbastanza squadre oppure le squadre sono dispari</value>
@@ -201,6 +213,9 @@
   <data name="InsertEditResult" xml:space="preserve">
     <value>Inserisci o modifica risultato</value>
   </data>
+  <data name="Italian" xml:space="preserve">
+    <value>Italiano</value>
+  </data>
   <data name="ListOfTeams" xml:space="preserve">
     <value>Elenco delle squadre</value>
   </data>
@@ -230,6 +245,9 @@
   </data>
   <data name="SaveChanges" xml:space="preserve">
     <value>Salva modifiche</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Seleziona Lingua</value>
   </data>
   <data name="SquadName" xml:space="preserve">
     <value>Nome Squadra</value>

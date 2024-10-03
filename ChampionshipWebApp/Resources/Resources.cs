@@ -53,8 +53,17 @@ public static class Resources
     public static string RelegationZone => GetString("RelegationZone");
 
     public static string FewTeams => GetString("FewTeams");
+    public static string EditAccount => GetString("EditAccount");
+    public static string ChangeLanguage => GetString("ChangeLanguage");
+    public static string ChangePassword => GetString("ChangePassword");
 
-    
+    public static string SelectLanguage => GetString("SelectLanguage");
+    public static string English => GetString("English");
+    public static string Italian => GetString("Italian");
+
+
+
+
 
 
     private static string GetString(string name)
