@@ -117,25 +117,133 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
   <data name="AddTeams" xml:space="preserve">
     <value>Add Teams</value>
   </data>
-  <data name="ConfirmDeletion" xml:space="preserve">
+  <data name="AwayTeam" xml:space="preserve">
+    <value>Away Team</value>
+  </data>
+  <data name="BackToCalendar" xml:space="preserve">
+    <value>Back To Calendar</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Back To Home</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel Button</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="ColorOfClub" xml:space="preserve">
+    <value>Color Of Club</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>ConfirmDelete</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Defeats" xml:space="preserve">
+    <value>Defeats</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete Button</value>
+  </data>
+  <data name="DeleteChanges" xml:space="preserve">
+    <value>Delete Changes</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
     <value>Are you sure you want to delete this team?</value>
+  </data>
+  <data name="Draws" xml:space="preserve">
+    <value>Draws</value>
+  </data>
+  <data name="EditResult" xml:space="preserve">
+    <value>Edit Result</value>
   </data>
   <data name="EditTeam" xml:space="preserve">
     <value>Edit Team</value>
   </data>
+  <data name="FewTeams" xml:space="preserve">
+    <value>There are not enough teams or the teams are odd</value>
+  </data>
   <data name="FootballLeague" xml:space="preserve">
     <value>Football League</value>
+  </data>
+  <data name="FootballLeagueCalendar" xml:space="preserve">
+    <value>Football League Calendar</value>
+  </data>
+  <data name="FoundationYear" xml:space="preserve">
+    <value>Foundation Year</value>
+  </data>
+  <data name="GamesPlayed" xml:space="preserve">
+    <value>GamesPlayed</value>
+  </data>
+  <data name="GenerateCalendar" xml:space="preserve">
+    <value>Generate Calendar</value>
+  </data>
+  <data name="GolAgainst" xml:space="preserve">
+    <value>GolAgainst</value>
+  </data>
+  <data name="GolScored" xml:space="preserve">
+    <value>GolSored</value>
+  </data>
+  <data name="HomeTeam" xml:space="preserve">
+    <value>Home Team</value>
+  </data>
+  <data name="InsertEditResult" xml:space="preserve">
+    <value>Insert Edit Result</value>
   </data>
   <data name="ListOfTeams" xml:space="preserve">
     <value>List of Teams</value>
   </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Matchday" xml:space="preserve">
+    <value>Matchday</value>
+  </data>
   <data name="NoTeamsMessage" xml:space="preserve">
     <value>No teams have been added yet.</value>
   </data>
+  <data name="NotPlayed" xml:space="preserve">
+    <value>Not Played</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="Rakings" xml:space="preserve">
+    <value>Rakings</value>
+  </data>
+  <data name="RelegationZone" xml:space="preserve">
+    <value>RelegationZone</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>SaveChanges</value>
+  </data>
+  <data name="SquadName" xml:space="preserve">
+    <value>Squad Name</value>
+  </data>
+  <data name="StadiumName" xml:space="preserve">
+    <value>Stadium Name</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="ViewRankings" xml:space="preserve">
+    <value>View Rankings</value>
+  </data>
   <data name="WelcomeMessage" xml:space="preserve">
-    <value>Welcome, {0}</value>
+    <value>Welcome, {0} !</value>
+  </data>
+  <data name="Wins" xml:space="preserve">
+    <value>Wins</value>
   </data>
 </root>

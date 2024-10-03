@@ -117,25 +117,136 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Actions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
   <data name="AddTeams" xml:space="preserve">
     <value>Aggiungi Squadre</value>
   </data>
+  <data name="AwayTeam" xml:space="preserve">
+    <value>Squadra Ospite</value>
+  </data>
+  <data name="BackToCalendar" xml:space="preserve">
+    <value>Torna calendario</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Torna alla home</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancella</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Città</value>
+  </data>
+  <data name="ColorOfClub" xml:space="preserve">
+    <value>Colori Sociali</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Conferma eliminazione</value>
+  </data>
   <data name="ConfirmDeletion" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare questa squadra?</value>
+    <value>Elimina</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Defeats" xml:space="preserve">
+    <value>Sconfitte</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="DeleteChanges" xml:space="preserve">
+    <value>Cancella modifche</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Sei sicuro di voler eliminare questa squadra</value>
+  </data>
+  <data name="Draws" xml:space="preserve">
+    <value>Pareggi</value>
+  </data>
+  <data name="EditResult" xml:space="preserve">
+    <value>Modifica Risultato</value>
   </data>
   <data name="EditTeam" xml:space="preserve">
     <value>Modifica squadra</value>
   </data>
+  <data name="FewTeams" xml:space="preserve">
+    <value>Non ci sono abbastanza squadre oppure le squadre sono dispari</value>
+  </data>
   <data name="FootballLeague" xml:space="preserve">
     <value>Campionato di Calcio</value>
+  </data>
+  <data name="FootballLeagueCalendar" xml:space="preserve">
+    <value>Calendario del campionato</value>
+  </data>
+  <data name="FoundationYear" xml:space="preserve">
+    <value>Anno Di Fondazione</value>
+  </data>
+  <data name="GamesPlayed" xml:space="preserve">
+    <value>Partite Giocate</value>
+  </data>
+  <data name="GenerateCalendar" xml:space="preserve">
+    <value>Genera Calendario</value>
+  </data>
+  <data name="GolAgainst" xml:space="preserve">
+    <value>Gol Subiti</value>
+  </data>
+  <data name="GolScored" xml:space="preserve">
+    <value>Gol Fatti</value>
+  </data>
+  <data name="HomeTeam" xml:space="preserve">
+    <value>Squadra Di Casa</value>
+  </data>
+  <data name="InsertEditResult" xml:space="preserve">
+    <value>Inserisci o modifica risultato</value>
   </data>
   <data name="ListOfTeams" xml:space="preserve">
     <value>Elenco delle squadre</value>
   </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Esci</value>
+  </data>
+  <data name="Matchday" xml:space="preserve">
+    <value>Giornata</value>
+  </data>
   <data name="NoTeamsMessage" xml:space="preserve">
     <value>Nessuna squadra è stata aggiunta ancora.</value>
   </data>
+  <data name="NotPlayed" xml:space="preserve">
+    <value>Non Giocata</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>Punti</value>
+  </data>
+  <data name="Rakings" xml:space="preserve">
+    <value>Classifica</value>
+  </data>
+  <data name="RelegationZone" xml:space="preserve">
+    <value>Zona Retrocessione</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Risultato</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Salva modifiche</value>
+  </data>
+  <data name="SquadName" xml:space="preserve">
+    <value>Nome Squadra</value>
+  </data>
+  <data name="StadiumName" xml:space="preserve">
+    <value>Nome Stadio</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Conferma</value>
+  </data>
+  <data name="ViewRankings" xml:space="preserve">
+    <value>Classifica</value>
+  </data>
   <data name="WelcomeMessage" xml:space="preserve">
     <value>Benvenuto, {0} !</value>
+  </data>
+  <data name="Wins" xml:space="preserve">
+    <value>Vittorie</value>
   </data>
 </root>

@@ -19,10 +19,21 @@ public class AccountController : Controller
 
     public IActionResult Login(string registrationSuccessMessage = null)
     {
-        ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
+        if (TempData["RegistrationSuccessMessage"] != null)
+        {
+            ViewBag.RegistrationSuccessMessage = TempData["RegistrationSuccessMessage"];
+        }
+        else
+        {
+            ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
+        }
+
         ViewData["Culture"] = HttpContext.Request.Query["culture"].ToString() ?? "en";
+
         return View();
     }
+
+
 
     [HttpGet]
     public IActionResult ChangeLanguage(string culture)

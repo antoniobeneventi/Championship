@@ -1,4 +1,15 @@
-﻿<style>
+﻿@using ChampionshipWebApp.Resources
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using System.Security.Claims;
+
+@{
+    var userLanguage = User.Claims.FirstOrDefault(c => c.Type == "Language")?.Value ?? "en";
+    System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(userLanguage);
+    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+}
+
+<style>
     .blue-row {
         background-color: #007bff; 
         color: white; 
@@ -53,23 +64,23 @@
 </style>
 
 <div class="d-flex justify-content-start mb-3">
-    <a href="/Teams/ViewCalendar" class="btn btn-primary">Back to Calendar</a>
+    <a href="/Teams/ViewCalendar" class="btn btn-primary">@string.Format(Resources.BackToCalendar)</a>
 </div>
 
 
-<h2 class="mt-4">Ranking</h2>
+<h2 class="mt-4">@string.Format(Resources.Rakings)</h2>
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
-                <th>Squad Name</th>
-                <th>Games Played</th>
-                <th>Wins</th>
-                <th>Draws</th>
-                <th>Defeats</th>
-                <th>Gol Scored</th>
-                <th>Gol Against</th>
-                <th>Points</th>
+                <th>@string.Format(Resources.SquadName)</th>
+                <th>@string.Format(Resources.GamesPlayed)</th>
+                <th>@string.Format(Resources.Wins)</th>
+                <th>@string.Format(Resources.Draws)</th>
+                <th>@string.Format(Resources.Defeats)</th>
+                <th>@string.Format(Resources.GolScored)</th>
+                <th>@string.Format(Resources.GolAgainst)</th>
+                <th>@string.Format(Resources.Points)</th>
             </tr>
         </thead>
         <tbody>
@@ -106,5 +117,5 @@
     <div class="blue-box"></div> Champions League
     <div class="orange-box"></div> Europa League
     <div class="green-box"></div> Conference League
-    <div class="red-box"></div> Relegation Zone
+    <div class="red-box"></div> @string.Format(Resources.RelegationZone)
 </div>

@@ -1,116 +1,145 @@
-﻿<h2 class="mt-5 text-center">Football League Calendar</h2>
+﻿@using ChampionshipWebApp.Resources
 
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-warning text-center">
-        @ViewBag.Message
-    </div>
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using System.Security.Claims;
+
+@{
+    var userLanguage = User.Claims.FirstOrDefault(c => c.Type == "Language")?.Value ?? "en";
+    System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(userLanguage);
+    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Threading.Thread.CurrentThread.CurrentCulture;
 }
 
-else
-{
-    int matchdayCounter = 1;
-    <div class="d-flex justify-content-start">
-        <a href="/Home/index" class="btn btn-primary row-sm-auto">Back To Home</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@string.Format(Resources.FootballLeague)</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+   
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="mt-5 text-center">@string.Format(Resources.FootballLeagueCalendar)</h2>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning text-center">
+                @string.Format(Resources.FewTeams)
+            </div>
+        }
+        else
+        {
+            int matchdayCounter = 1;
+            <div class="d-flex justify-content-start">
+                <a href="/Home/index" class="btn btn-primary row-sm-auto">@string.Format(Resources.BackToHome)</a>
+            </div>
+
+            <div class="text-center mb-4">
+                <form asp-action="Rankings" asp-controller="Teams" method="post">
+                    <button type="submit" class="btn btn-primary">@string.Format(Resources.ViewRankings)</button>
+                </form>
+            </div>
+
+            @foreach (var day in Model)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        @string.Format(Resources.Matchday, matchdayCounter)
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>@string.Format(Resources.HomeTeam)</th>
+                                    <th>@string.Format(Resources.AwayTeam)</th>
+                                    <th>@string.Format(Resources.Date)</th>
+                                    <th>@string.Format(Resources.StadiumName)</th>
+                                    <th>@string.Format(Resources.City)</th>
+                                    <th>@string.Format(Resources.InsertEditResult)</th>
+                                    <th>@string.Format(Resources.Result)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var match in day)
+                                {
+                                    <tr>
+                                        <td>@match.HomeTeam.SquadName</td>
+                                        <td>@match.AwayTeam.SquadName</td>
+                                        <td>@match.MatchDate.ToShortDateString()</td>
+                                        <td>@match.StadiumName</td>
+                                        <td>@match.City</td>
+                                        <td>
+                                            @if (match.EditMode == true || match.Result == null)
+                                            {
+                                                <form asp-action="SubmitResult" asp-controller="Teams" method="post">
+                                                    <input type="hidden" name="matchId" value="@match.Id" />
+                                                    <input type="hidden" name="editMode" value="true" />
+                                                    <select name="homeTeamScore">
+                                                        @for (int i = 0; i <= 10; i++)
+                                                        {
+                                                            if (match.Result != null && match.Result.HomeTeamScore == i)
+                                                            {
+                                                                <option value="@i" selected>@i</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@i">@i</option>
+                                                            }
+                                                        }
+                                                    </select>
+
+                                                    <select name="awayTeamScore">
+                                                        @for (int i = 0; i <= 10; i++)
+                                                        {
+                                                            if (match.Result != null && match.Result.AwayTeamScore == i)
+                                                            {
+                                                                <option value="@i" selected>@i</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@i">@i</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <button type="submit" class="btn btn-success btn-sm">@string.Format(Resources.Submit)</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="EditResult" asp-controller="Teams" method="post">
+                                                    <input type="hidden" name="matchId" value="@match.Id" />
+                                                    <button type="submit" class="btn btn-primary btn-sm">@string.Format(Resources.EditResult)</button>
+                                                </form>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (match.Result != null)
+                                            {
+                                                <span class="badge bg-success">
+                                                    @($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">@string.Format(Resources.NotPlayed)</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                matchdayCounter++;
+            }
+        }
     </div>
 
-    <div class="text-center mb-4">
-        <form asp-action="Rankings" asp-controller="Teams" method="post">
-            <button type="submit" class="btn btn-primary">View Rankings</button>
-        </form>
-    </div>
-
-    @foreach (var day in Model)
-    {
-        <div class="card mb-3 shadow-sm">
-            <div class="card-header bg-dark text-white">
-                Matchday @matchdayCounter
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Home Team</th>
-                            <th>Away Team</th>
-                            <th>Date</th>
-                            <th>Stadium</th>
-                            <th>City</th>
-                            <th>Insert/Edit Result</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var match in day)
-                        {
-                            <tr>
-                                <td>@match.HomeTeam.SquadName</td>
-                                <td>@match.AwayTeam.SquadName</td>
-                                <td>@match.MatchDate.ToShortDateString()</td>
-                                <td>@match.StadiumName</td>
-                                <td>@match.City</td>
-                                <td>
-                                    @if (match.EditMode == true || match.Result == null)
-                                    {
-                                        <form asp-action="SubmitResult" asp-controller="Teams" method="post">
-                                            <input type="hidden" name="matchId" value="@match.Id" />
-                                            <input type="hidden" name="editMode" value="true" />
-                                            <select name="homeTeamScore">
-                                                @for (int i = 0; i <= 10; i++)
-                                                {
-                                                    if (match.Result != null && match.Result.HomeTeamScore == i)
-                                                    {
-                                                        <option value="@i" selected>@i</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@i">@i</option>
-                                                    }
-                                                }
-                                            </select>
-
-                                            <select name="awayTeamScore">
-                                                @for (int i = 0; i <= 10; i++)
-                                                {
-                                                    if (match.Result != null && match.Result.AwayTeamScore == i)
-                                                    {
-                                                        <option value="@i" selected>@i</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@i">@i</option>
-                                                    }
-                                                }
-                                            </select>
-
-                                            <button type="submit" class="btn btn-success btn-sm">Submit</button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <form asp-action="EditResult" asp-controller="Teams" method="post">
-                                            <input type="hidden" name="matchId" value="@match.Id" />
-                                            <button type="submit" class="btn btn-primary btn-sm">Edit Result</button>
-                                        </form>
-                                    }
-                                </td>
-                                <td>
-                                    @if (match.Result != null)
-                                    {
-                                        <span class="badge bg-success">
-                                            @($"{match.Result.HomeTeamScore} - {match.Result.AwayTeamScore}")
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning">Not Played</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        matchdayCounter++;
-    }
-}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
