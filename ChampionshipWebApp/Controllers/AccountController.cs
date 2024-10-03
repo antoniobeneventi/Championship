@@ -1,5 +1,4 @@
-﻿
-using Championship;
+﻿using Championship;
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 public class AccountController : Controller
 {
@@ -17,7 +17,6 @@ public class AccountController : Controller
         _context = context;
     }
 
-    // Action for Login
     public IActionResult Login(string registrationSuccessMessage = null)
     {
         ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
@@ -25,7 +24,6 @@ public class AccountController : Controller
         return View();
     }
 
-    // Action for Language Change
     [HttpGet]
     public IActionResult ChangeLanguage(string culture)
     {
@@ -38,30 +36,43 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    // POST action for Login
     [HttpPost]
-    public async Task<IActionResult> Login(string username, string password, string culture = "en")
+    public async Task<IActionResult> Login(string username, string password)
     {
         var user = await _context.Users
                                  .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
 
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
-            var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.Username) };
+            var userPreferredCulture = user.Language ?? "en"; 
+
+            var cultureInfo = new CultureInfo(userPreferredCulture);
+            CultureInfo.CurrentCulture = cultureInfo;
+            CultureInfo.CurrentUICulture = cultureInfo;
+
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim("Language", userPreferredCulture) 
+        };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
             return RedirectToAction("Index", "Home");
         }
 
+        var defaultCulture = user?.Language ?? "en";
         ModelState.AddModelError(string.Empty,
-            culture == "it" ? "Tentativo di login non valido." : "Invalid login attempt.");
+            defaultCulture == "it" ? "Tentativo di login non valido." : "Invalid login attempt.");
+
         ViewData["Username"] = username;
-        ViewData["Culture"] = culture; // Preserve the culture
+        ViewData["Culture"] = defaultCulture;
+
         return View();
     }
 
-    // POST action for Logout
+
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
@@ -69,7 +80,6 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    // POST action for Register
     [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model, string culture = "en")
     {
@@ -84,21 +94,29 @@ public class AccountController : Controller
                     ? "Il nome utente è già in uso. Si prega di riprovare con un altro."
                     : "The username is already in use. Please try again with another one.";
                 ViewBag.ShowRegisterModal = true;
-                ViewData["Culture"] = culture; // Preserve the culture
+                ViewData["Culture"] = culture; 
                 return View("Login");
             }
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            var user = new User { Username = model.Username, Password = hashedPassword, Language = model.Language }; // Store the language
+            var user = new User
+            {
+                Username = model.Username,
+                Password = hashedPassword,
+                Language = model.Language
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Login", new { registrationSuccessMessage = "Registration completed successfully!", culture });
+            TempData["RegistrationSuccessMessage"] = culture == "it"
+                ? "Registrazione completata con successo!"
+                : "Registration completed successfully!";
+            return RedirectToAction("Login", new { culture });
         }
 
         ViewBag.ShowRegisterModal = true;
-        ViewData["Culture"] = culture; // Preserve the culture
+        ViewData["Culture"] = culture; 
         return View("Login");
     }
 

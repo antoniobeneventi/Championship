@@ -5,6 +5,12 @@
 @using Microsoft.AspNetCore.Authentication.Cookies;
 @using System.Security.Claims;
 
+@{
+    var userLanguage = User.Claims.FirstOrDefault(c => c.Type == "Language")?.Value ?? "en";
+    System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(userLanguage);
+    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -261,7 +267,6 @@
             $('#editModal').modal('show');
         }
 
-        // Funzione per ripristinare i campi ai valori originali
         function resetEditForm() {
             $('#EditSquadName').val(originalSquadName);
             $('#EditFondationYear').val(originalFondationYear);

@@ -10,7 +10,7 @@ public static class Resources
 
     public static string WelcomeMessage => GetString("WelcomeMessage");
     public static string FootballLeague => GetString("FootballLeague");
-    //public static string AddTeams => GetString("AddTeams");
+    public static string AddTeams => GetString("AddTeams");
     //public static string GenerateCalendar => GetString("GenerateCalendar");
     public static string ListOfTeams => GetString("ListOfTeams");
     //public static string SquadName => GetString("SquadName");

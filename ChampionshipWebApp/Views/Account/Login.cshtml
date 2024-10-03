@@ -91,7 +91,6 @@
                        placeholder="@(currentCulture == "it" ? "Inserisci la tua password" : "Insert your password")" />
             </div>
 
-            <input type="hidden" name="culture" value="@currentCulture" />
             <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary btn-block btn-space">
                     @(currentCulture == "it" ? "Accedi" : "Login")
@@ -173,10 +172,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        function changeLanguage(culture) {
-            window.location.href = '/Account/Login?culture=' + culture;
+        function changeLanguage(lang) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('culture', lang);
+            window.location.search = urlParams.toString();
         }
-
         $(document).ready(function () {
             var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
             if (showRegisterModal === 'True') {

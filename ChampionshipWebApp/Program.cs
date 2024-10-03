@@ -7,7 +7,6 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurazione di Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Error()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -15,14 +14,9 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Configurazione del DbContext
 builder.Services.AddDbContext<FootballLeagueContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("FootballLeagueDatabase")));
 
-// Aggiunta dei servizi per i controller e le viste
-builder.Services.AddControllersWithViews();
-
-// Aggiunta della localizzazione
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -38,7 +32,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures = supportedCultures;
 });
 
-// Configurazione dell'autenticazione
+builder.Services.AddControllersWithViews(); 
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -48,24 +43,29 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
-// Utilizzo della localizzazione
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
-// Configurazione dei file statici, routing, autenticazione e autorizzazione
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configurazione delle route
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var preferredLanguage = context.User.FindFirst("Language")?.Value ?? "en";
+
+        var cultureInfo = new CultureInfo(preferredLanguage);
+        CultureInfo.CurrentCulture = cultureInfo;
+        CultureInfo.CurrentUICulture = cultureInfo;
+    }
+
+    await next.Invoke();
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
-
-// Impostazione della cultura corrente (opzionale)
-// Puoi cambiare questa logica per impostare la cultura in base alle esigenze
-var cultureInfo = new CultureInfo("en"); // Imposta la cultura predefinita
-CultureInfo.CurrentCulture = cultureInfo;
-CultureInfo.CurrentUICulture = cultureInfo;
 
 app.Run();
