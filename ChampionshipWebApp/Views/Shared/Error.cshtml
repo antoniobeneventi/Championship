@@ -2,10 +2,21 @@
 @{
     ViewData["Title"] = "Error";
 }
+  @using ChampionshipWebApp.Resources
+
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using System.Security.Claims;
+
+@{
+    var userLanguage = User.Claims.FirstOrDefault(c => c.Type == "Language")?.Value ?? "en";
+    System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(userLanguage);
+    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+}
 
 <div class="container">
-    <h1 class="mt-5 text-danger">This team is already exist</h1>
+    <h1 class="mt-5 text-danger">@string.Format(Resources.TeamExist)</h1>
     <p class="mt-3">@ViewBag.Message</p>
 
-    <a href="/AddTeams.html" class="btn btn-primary mt-3">Back to add team</a>
+    <a href="@Url.Action("AddTeams","Teams")" class="btn btn-primary mt-3">@string.Format(Resources.BackAddTeam)</a>
 </div>

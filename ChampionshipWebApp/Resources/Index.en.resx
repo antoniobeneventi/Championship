@@ -120,11 +120,17 @@
   <data name="Actions" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="AddNewTeam" xml:space="preserve">
+    <value>Add New Team</value>
+  </data>
   <data name="AddTeams" xml:space="preserve">
     <value>Add Teams</value>
   </data>
   <data name="AwayTeam" xml:space="preserve">
     <value>Away Team</value>
+  </data>
+  <data name="BackAddTeam" xml:space="preserve">
+    <value>Back Add Team</value>
   </data>
   <data name="BackToCalendar" xml:space="preserve">
     <value>Back To Calendar</value>
@@ -260,6 +266,9 @@
   </data>
   <data name="Submit" xml:space="preserve">
     <value>Submit</value>
+  </data>
+  <data name="TeamExist" xml:space="preserve">
+    <value>Team Exist</value>
   </data>
   <data name="ViewRankings" xml:space="preserve">
     <value>View Rankings</value>

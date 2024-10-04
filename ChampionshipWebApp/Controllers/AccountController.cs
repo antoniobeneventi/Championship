@@ -145,9 +145,10 @@ public class AccountController : Controller
             await _context.SaveChangesAsync();
 
             TempData["RegistrationSuccessMessage"] = culture == "it"
-                ? "Registrazione completata con successo!"
-                : "Registration completed successfully!";
-            return RedirectToAction("Login", new { culture });
+                ? "Registration completed successfully!"
+                : "Registrazione completata con successo!";
+           
+            return RedirectToAction("Login", new { culture = model.Language});
         }
 
         ViewBag.ShowRegisterModal = true;

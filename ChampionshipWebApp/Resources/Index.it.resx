@@ -120,11 +120,17 @@
   <data name="Actions" xml:space="preserve">
     <value>Azioni</value>
   </data>
+  <data name="AddNewTeam" xml:space="preserve">
+    <value>Aggiungi nuova squadra</value>
+  </data>
   <data name="AddTeams" xml:space="preserve">
-    <value>Aggiungi Squadre</value>
+    <value>Aggiungi Squadra</value>
   </data>
   <data name="AwayTeam" xml:space="preserve">
     <value>Squadra Ospite</value>
+  </data>
+  <data name="BackAddTeam" xml:space="preserve">
+    <value>Torna all'aggiunta della squadra</value>
   </data>
   <data name="BackToCalendar" xml:space="preserve">
     <value>Torna calendario</value>
@@ -166,7 +172,7 @@
     <value>Cancella modifche</value>
   </data>
   <data name="DeleteMessage" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare questa squadra</value>
+    <value>Sei sicuro di voler eliminare questa squadra?</value>
   </data>
   <data name="Draws" xml:space="preserve">
     <value>Pareggi</value>
@@ -263,6 +269,9 @@
   </data>
   <data name="Submit" xml:space="preserve">
     <value>Conferma</value>
+  </data>
+  <data name="TeamExist" xml:space="preserve">
+    <value>La squadra inserita esiste già</value>
   </data>
   <data name="ViewRankings" xml:space="preserve">
     <value>Classifica</value>

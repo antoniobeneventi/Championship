@@ -128,9 +128,10 @@ public async Task<IActionResult> AddTeam(string SquadName, int FondationYear, st
     }
 
 
-    public async Task<IActionResult> Delete(string squadName)
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
     {
-        var team = await _context.Teams.FirstOrDefaultAsync(t => t.SquadName == squadName);
+        var team = await _context.Teams.FindAsync(id);  
         if (team != null)
         {
             _context.Teams.Remove(team);

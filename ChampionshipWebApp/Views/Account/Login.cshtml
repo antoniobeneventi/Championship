@@ -71,8 +71,12 @@
 
         @if (!string.IsNullOrEmpty(ViewBag.RegistrationSuccessMessage))
         {
-            <div class="text-success">@ViewBag.RegistrationSuccessMessage</div>
+            <div id="successMessage" class="text-success">
+                @ViewBag.RegistrationSuccessMessage
+            </div>
         }
+
+
 
         <form asp-action="Login" method="post">
             <input type="hidden" name="culture" value="@currentCulture" />
@@ -202,6 +206,11 @@
                     $('#registerButton').prop('disabled', false);
                 }
             });
+        });
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('#successMessage').fadeOut('slow');
+            }, 3000); 
         });
     </script>
 

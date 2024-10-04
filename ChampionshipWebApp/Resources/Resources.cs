@@ -64,8 +64,11 @@ public static class Resources
 
     public static string EnterNewPassword => GetString("EnterNewPassword");
 
+    public static string AddNewTeam => GetString("AddNewTeam");
 
-    
+
+    public static string TeamExist => GetString("TeamExist");
+    public static string BackAddTeam => GetString("BackAddTeam");
 
 
 
