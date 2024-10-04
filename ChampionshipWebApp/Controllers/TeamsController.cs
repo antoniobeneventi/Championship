@@ -13,6 +13,11 @@ public class TeamsController : Controller
     {
         _context = context;
     }
+    public IActionResult AddTeams()
+    {
+        return View();
+    }
+
    [HttpPost]
 public async Task<IActionResult> AddTeam(string SquadName, int FondationYear, string City, string ColorOfClub, string StadiumName)
 {

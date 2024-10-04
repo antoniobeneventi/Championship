@@ -180,6 +180,9 @@
   <data name="English" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="EnterNewPassword" xml:space="preserve">
+    <value>Enter New Password</value>
+  </data>
   <data name="FewTeams" xml:space="preserve">
     <value>There are not enough teams or the teams are odd</value>
   </data>
@@ -221,6 +224,9 @@
   </data>
   <data name="Matchday" xml:space="preserve">
     <value>Matchday</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New Password</value>
   </data>
   <data name="NoTeamsMessage" xml:space="preserve">
     <value>No teams have been added yet.</value>

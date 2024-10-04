@@ -33,7 +33,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangeLanguage(string language)
+    public async Task<IActionResult> ChangeLanguage(string language, string newPassword = null)
     {
         if (language == "en" || language == "it")
         {
@@ -55,13 +55,21 @@ public class AccountController : Controller
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user != null)
             {
-                user.Language = language; 
-                await _context.SaveChangesAsync(); 
+                user.Language = language;
+
+                // Se è stata fornita una nuova password, aggiornala
+                if (!string.IsNullOrEmpty(newPassword))
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                }
+
+                await _context.SaveChangesAsync();
             }
         }
 
         return Ok();
     }
+
 
 
     [HttpPost]
