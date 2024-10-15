@@ -232,7 +232,10 @@
     <value>Inserisci Nome Utente</value>
   </data>
   <data name="InvalidCredentialsMessage" xml:space="preserve">
-    <value>Messaggio credenziali invalide</value>
+    <value> credenziali invalide</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Tentantivo di login non valido</value>
   </data>
   <data name="Italian" xml:space="preserve">
     <value>Italiano</value>
@@ -275,6 +278,9 @@
   </data>
   <data name="RegisterButton" xml:space="preserve">
     <value>Registrazione</value>
+  </data>
+  <data name="RegistrationSuccess" xml:space="preserve">
+    <value>Registrazione effettuata con successo</value>
   </data>
   <data name="RelegationZone" xml:space="preserve">
     <value>Zona Retrocessione</value>

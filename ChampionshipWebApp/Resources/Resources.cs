@@ -86,7 +86,10 @@ public static class Resources
     public static string NoSpace => GetString("NoSpace");
 
 
+    public static string InvalidLogin => GetString("InvalidLogin");
+    public static string RegistrationSuccess => GetString("RegistrationSuccess");
 
+    
 
 
     private static string GetString(string name)

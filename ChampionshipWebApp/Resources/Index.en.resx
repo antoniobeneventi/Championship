@@ -229,7 +229,10 @@
     <value>Insert Username</value>
   </data>
   <data name="InvalidCredentialsMessage" xml:space="preserve">
-    <value>Invalid Credentials Message</value>
+    <value>Invalid Credentials</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Invalid login attempt</value>
   </data>
   <data name="Italian" xml:space="preserve">
     <value>Italian</value>
@@ -272,6 +275,9 @@
   </data>
   <data name="RegisterButton" xml:space="preserve">
     <value>Register</value>
+  </data>
+  <data name="RegistrationSuccess" xml:space="preserve">
+    <value>Registration Success</value>
   </data>
   <data name="RelegationZone" xml:space="preserve">
     <value>Relegation Zone</value>
