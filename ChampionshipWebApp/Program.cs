@@ -7,6 +7,7 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog for logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Error()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -14,9 +15,11 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Configure Entity Framework with SQLite
 builder.Services.AddDbContext<FootballLeagueContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("FootballLeagueDatabase")));
 
+// Configure localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -30,10 +33,15 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.DefaultRequestCulture = new RequestCulture("en");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
+
+    // Aggiungi il provider del cookie per leggere la cultura
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
-builder.Services.AddControllersWithViews(); 
+// Add controllers with views
+builder.Services.AddControllersWithViews();
 
+// Configure cookie authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -43,29 +51,43 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// Use request localization
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
+// Configure middleware for static files, routing, authentication, and authorization
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware to set culture based on user claims or cookies
 app.Use(async (context, next) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
-        var preferredLanguage = context.User.FindFirst("Language")?.Value ?? "en";
-
+        // Se l'utente ? autenticato, prendi la cultura dal claim
+        var preferredLanguage = context.User.FindFirst("Culture")?.Value ?? "en";
         var cultureInfo = new CultureInfo(preferredLanguage);
         CultureInfo.CurrentCulture = cultureInfo;
         CultureInfo.CurrentUICulture = cultureInfo;
+    }
+    else
+    {
+        // Se l'utente non ? autenticato, prendi la cultura dal cookie
+        var requestCultureFeature = context.Features.Get<IRequestCultureFeature>();
+        var requestCulture = requestCultureFeature?.RequestCulture.Culture ?? new CultureInfo("en");
+
+        CultureInfo.CurrentCulture = requestCulture;
+        CultureInfo.CurrentUICulture = requestCulture;
     }
 
     await next.Invoke();
 });
 
+// Map controller routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
+// Run the application
 app.Run();

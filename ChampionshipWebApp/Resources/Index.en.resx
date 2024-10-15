@@ -219,11 +219,26 @@
   <data name="InsertEditResult" xml:space="preserve">
     <value>Insert Edit Result</value>
   </data>
+  <data name="InsertPassword" xml:space="preserve">
+    <value>Insert Password</value>
+  </data>
+  <data name="InsertUsername" xml:space="preserve">
+    <value>Insert Username</value>
+  </data>
+  <data name="InvalidCredentialsMessage" xml:space="preserve">
+    <value>Invalid Credentials Message</value>
+  </data>
   <data name="Italian" xml:space="preserve">
     <value>Italian</value>
   </data>
   <data name="ListOfTeams" xml:space="preserve">
     <value>List of Teams</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Login Button</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Login Title</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
@@ -234,17 +249,26 @@
   <data name="NewPassword" xml:space="preserve">
     <value>New Password</value>
   </data>
+  <data name="NoSpace" xml:space="preserve">
+    <value>No Space</value>
+  </data>
   <data name="NoTeamsMessage" xml:space="preserve">
     <value>No teams have been added yet.</value>
   </data>
   <data name="NotPlayed" xml:space="preserve">
     <value>Not Played</value>
   </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Password Label</value>
+  </data>
   <data name="Points" xml:space="preserve">
     <value>Points</value>
   </data>
   <data name="Rakings" xml:space="preserve">
     <value>Rakings</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Register Button</value>
   </data>
   <data name="RelegationZone" xml:space="preserve">
     <value>RelegationZone</value>
@@ -269,6 +293,12 @@
   </data>
   <data name="TeamExist" xml:space="preserve">
     <value>Team Exist</value>
+  </data>
+  <data name="UsernameInUse" xml:space="preserve">
+    <value>Username In Use</value>
+  </data>
+  <data name="UsernameLabel" xml:space="preserve">
+    <value>Username Label</value>
   </data>
   <data name="ViewRankings" xml:space="preserve">
     <value>View Rankings</value>

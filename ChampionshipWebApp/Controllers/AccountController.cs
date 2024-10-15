@@ -1,8 +1,11 @@
 ﻿using Championship;
+using ChampionshipWebApp.Resources;
 using ChampionshipWebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Security.Claims;
@@ -16,7 +19,18 @@ public class AccountController : Controller
         _context = context;
     }
 
-    public IActionResult Login(string registrationSuccessMessage = null)
+    public List<Language> GetLanguages()
+    {
+        return new List<Language>
+        {
+            new Language { Code = "en", Name = "English" },
+            new Language { Code = "it", Name = "Italiano" },
+        };
+
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Login(string registrationSuccessMessage = null)
     {
         if (TempData["RegistrationSuccessMessage"] != null)
         {
@@ -27,13 +41,20 @@ public class AccountController : Controller
             ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
         }
 
-        ViewData["Culture"] = HttpContext.Request.Query["culture"].ToString() ?? "en";
-
+        var currentCulture = HttpContext.Request.Query["culture"].ToString() ?? "en";
+        if (string.IsNullOrEmpty(currentCulture)) currentCulture = "en";
+        ViewData["Culture"] = currentCulture;
+        ViewData["Languages"] = GetLanguages();
+        ViewBag.Languages = GetLanguages();
+        ViewBag.LoginTitle = currentCulture == "it" ? Resources.LoginTitle : Resources.LoginTitle;
+        ViewBag.UsernameLabel = currentCulture == "it" ? Resources.UsernameLabel : Resources.UsernameLabel;
+        ViewBag.PasswordLabel = currentCulture == "it" ? Resources.PasswordLabel : Resources.PasswordLabel;
+        ViewBag.LoginButton = currentCulture == "it" ? Resources.LoginButton : Resources.LoginButton;
         return View();
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangeLanguage(string language, string newPassword = null)
+    public async Task<IActionResult> ChangeLanguage(string language)
     {
         if (language == "en" || language == "it")
         {
@@ -51,59 +72,74 @@ public class AccountController : Controller
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
             var username = User.Identity.Name;
-
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user != null)
             {
                 user.Language = language;
-
-                // Se è stata fornita una nuova password, aggiornala
-                if (!string.IsNullOrEmpty(newPassword))
-                {
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                }
-
                 await _context.SaveChangesAsync();
             }
         }
 
-        return Ok();
+        return RedirectToAction("Index", "Home");
     }
 
+    [HttpPost]
+    public IActionResult ChangeLanguageOnLogin(string language)
+    {
+        if (language == "en" || language == "it")
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language))
+            );
+        }
+
+        return RedirectToAction("Login", new { culture = language });
+    }
 
 
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
-        var user = await _context.Users
-                                 .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
-
-        if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            var userPreferredCulture = user.Language ?? "en";
+            ModelState.AddModelError(string.Empty, "Insert data.");
+        }
+        else
+        {
+            var user = await _context.Users
+                                     .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
 
-            var cultureInfo = new CultureInfo(userPreferredCulture);
-            CultureInfo.CurrentCulture = cultureInfo;
-            CultureInfo.CurrentUICulture = cultureInfo;
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                var userPreferredCulture = user.Language ?? "en";
 
-            var claims = new List<Claim>
+                var cultureInfo = new CultureInfo(userPreferredCulture);
+                CultureInfo.CurrentCulture = cultureInfo;
+                CultureInfo.CurrentUICulture = cultureInfo;
+
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim("Language", userPreferredCulture)
             };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                var defaultCulture = "en";
+                ModelState.AddModelError(string.Empty,
+                    defaultCulture == "it" ? "Tentativo di login non valido." : "Invalid login attempt.");
+            }
         }
 
-        var defaultCulture = user?.Language ?? "en";
-        ModelState.AddModelError(string.Empty,
-            defaultCulture == "it" ? "Tentativo di login non valido." : "Invalid login attempt.");
-
         ViewData["Username"] = username;
-        ViewData["Culture"] = defaultCulture;
+        ViewData["Culture"] = "en";
+        ViewData["Languages"] = GetLanguages();
 
         return View();
     }
@@ -125,9 +161,13 @@ public class AccountController : Controller
 
             if (existingUser != null)
             {
+                ViewData["Languages"] = GetLanguages();
+
+
                 ViewBag.UsernameInUseMessage = culture == "it"
-                    ? "Il nome utente è già in uso. Si prega di riprovare con un altro."
-                    : "The username is already in use. Please try again with another one.";
+                    ? Resources.UsernameInUse
+                    : Resources.UsernameInUse;
+
                 ViewBag.ShowRegisterModal = true;
                 ViewData["Culture"] = culture;
                 return View("Login");
@@ -144,15 +184,18 @@ public class AccountController : Controller
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            TempData["RegistrationSuccessMessage"] = culture == "it"
-                ? "Registration completed successfully!"
-                : "Registrazione completata con successo!";
-           
-            return RedirectToAction("Login", new { culture = model.Language});
+            TempData["RegistrationSuccessMessage"] = model.Language == "it"
+                ? "Registrazione completata con successo!"
+                : "Registration completed successfully!";
+
+            return RedirectToAction("Login", new { culture = model.Language });
         }
 
+        ViewData["Languages"] = GetLanguages();
         ViewBag.ShowRegisterModal = true;
         ViewData["Culture"] = culture;
         return View("Login");
     }
+
+
 }
