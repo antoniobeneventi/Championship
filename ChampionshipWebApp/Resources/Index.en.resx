@@ -201,6 +201,9 @@
   <data name="FoundationYear" xml:space="preserve">
     <value>Foundation Year</value>
   </data>
+  <data name="French" xml:space="preserve">
+    <value>French</value>
+  </data>
   <data name="GamesPlayed" xml:space="preserve">
     <value>GamesPlayed</value>
   </data>

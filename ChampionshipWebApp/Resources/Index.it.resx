@@ -204,6 +204,9 @@
   <data name="FoundationYear" xml:space="preserve">
     <value>Anno Di Fondazione</value>
   </data>
+  <data name="French" xml:space="preserve">
+    <value>Francese</value>
+  </data>
   <data name="GamesPlayed" xml:space="preserve">
     <value>Partite Giocate</value>
   </data>

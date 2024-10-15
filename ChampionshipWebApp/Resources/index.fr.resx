@@ -201,6 +201,9 @@
   <data name="FoundationYear" xml:space="preserve">
     <value>Année de fondation</value>
   </data>
+  <data name="French" xml:space="preserve">
+    <value>Francais</value>
+  </data>
   <data name="GamesPlayed" xml:space="preserve">
     <value>Jeux Joués</value>
   </data>
@@ -238,7 +241,7 @@
     <value>se connecter</value>
   </data>
   <data name="LoginTitle" xml:space="preserve">
-    <value>ConnexionTitre</value>
+    <value>accéder</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Déconnexion</value>

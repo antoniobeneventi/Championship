@@ -60,6 +60,8 @@ public static class Resources
     public static string SelectLanguage => GetString("SelectLanguage");
     public static string English => GetString("English");
     public static string Italian => GetString("Italian");
+    public static string French => GetString("French");
+
     public static string NewPassword => GetString("NewPassword");
 
     public static string EnterNewPassword => GetString("EnterNewPassword");
