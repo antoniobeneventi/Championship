@@ -86,6 +86,7 @@ public static class Resources
 
 
 
+
     private static string GetString(string name)
     {
         return ResourceManager.GetString(name, CultureInfo.CurrentUICulture);

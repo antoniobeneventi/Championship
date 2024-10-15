@@ -1,10 +1,12 @@
-﻿
-namespace ChampionshipWebApp.Models;
+﻿using Championship;
 
-public class RegisterViewModel
+namespace ChampionshipWebApp.Models
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string Language { get; set; }
+    public class RegisterViewModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Language { get; set; }
 
+    }
 }

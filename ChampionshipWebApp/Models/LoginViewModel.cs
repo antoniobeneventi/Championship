@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Championship;
+using System.ComponentModel.DataAnnotations;
+
 
 public class LoginViewModel
 {
@@ -7,4 +9,5 @@ public class LoginViewModel
 
     [Required]
     public string Password { get; set; }
+
 }

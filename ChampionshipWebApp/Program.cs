@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -27,7 +27,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     var supportedCultures = new List<CultureInfo>
     {
         new CultureInfo("en"),
-        new CultureInfo("it")
+        new CultureInfo("it"),
+        new CultureInfo("fr")
     };
 
     options.DefaultRequestCulture = new RequestCulture("en");
@@ -65,7 +66,7 @@ app.Use(async (context, next) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
-        // Se l'utente ? autenticato, prendi la cultura dal claim
+        // Se l'utente � autenticato, prendi la cultura dal claim
         var preferredLanguage = context.User.FindFirst("Culture")?.Value ?? "en";
         var cultureInfo = new CultureInfo(preferredLanguage);
         CultureInfo.CurrentCulture = cultureInfo;
@@ -73,7 +74,7 @@ app.Use(async (context, next) =>
     }
     else
     {
-        // Se l'utente non ? autenticato, prendi la cultura dal cookie
+        // Se l'utente non � autenticato, prendi la cultura dal cookie
         var requestCultureFeature = context.Features.Get<IRequestCultureFeature>();
         var requestCulture = requestCultureFeature?.RequestCulture.Culture ?? new CultureInfo("en");
 

@@ -22,12 +22,13 @@ public class AccountController : Controller
     public List<Language> GetLanguages()
     {
         return new List<Language>
-        {
-            new Language { Code = "en", Name = "English" },
-            new Language { Code = "it", Name = "Italiano" },
-        };
-
+    {
+        new Language { Code = "en", Name = "English" },
+        new Language { Code = "it", Name = "Italiano" },
+        new Language { Code = "fr", Name = "Français" } // Add French
+    };
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Login(string registrationSuccessMessage = null)
@@ -42,21 +43,25 @@ public class AccountController : Controller
         }
 
         var currentCulture = HttpContext.Request.Query["culture"].ToString() ?? "en";
-        if (string.IsNullOrEmpty(currentCulture)) currentCulture = "en";
+
         ViewData["Culture"] = currentCulture;
         ViewData["Languages"] = GetLanguages();
         ViewBag.Languages = GetLanguages();
-        ViewBag.LoginTitle = currentCulture == "it" ? Resources.LoginTitle : Resources.LoginTitle;
-        ViewBag.UsernameLabel = currentCulture == "it" ? Resources.UsernameLabel : Resources.UsernameLabel;
-        ViewBag.PasswordLabel = currentCulture == "it" ? Resources.PasswordLabel : Resources.PasswordLabel;
-        ViewBag.LoginButton = currentCulture == "it" ? Resources.LoginButton : Resources.LoginButton;
+        if (currentCulture == "it" || currentCulture == "")
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture("en"))
+                );
+
+        }
         return View();
     }
 
     [HttpPost]
     public async Task<IActionResult> ChangeLanguage(string language)
     {
-        if (language == "en" || language == "it")
+        if (language == "en" || language == "it" || language == "fr")
         {
             var identity = (ClaimsIdentity)User.Identity;
             var claim = identity.FindFirst("Language");
@@ -86,7 +91,7 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult ChangeLanguageOnLogin(string language)
     {
-        if (language == "en" || language == "it")
+        if (language == "en" || language == "it" || language == "fr") // Add "fr"
         {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
@@ -94,7 +99,7 @@ public class AccountController : Controller
             );
         }
 
-        return RedirectToAction("Login", new { culture = language });
+        return RedirectToAction("Login");
     }
 
 
@@ -199,3 +204,6 @@ public class AccountController : Controller
 
 
 }
+
+
+

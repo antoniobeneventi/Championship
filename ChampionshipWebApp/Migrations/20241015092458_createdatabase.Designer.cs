@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChampionshipWebApp.Migrations
 {
     [DbContext(typeof(FootballLeagueContext))]
-    [Migration("20241015084059_createdatabase")]
+    [Migration("20241015092458_createdatabase")]
     partial class createdatabase
     {
         /// <inheritdoc />
@@ -18,6 +18,25 @@ namespace ChampionshipWebApp.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
+
+            modelBuilder.Entity("Championship.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+                });
 
             modelBuilder.Entity("Championship.Match", b =>
                 {

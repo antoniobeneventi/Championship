@@ -238,10 +238,10 @@
     <value>Elenco delle squadre</value>
   </data>
   <data name="LoginButton" xml:space="preserve">
-    <value>Bottone d'accesso</value>
+    <value>Accedi</value>
   </data>
   <data name="LoginTitle" xml:space="preserve">
-    <value>Titolo accesso</value>
+    <value>Accesso</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Esci</value>
@@ -271,7 +271,7 @@
     <value>Classifica</value>
   </data>
   <data name="RegisterButton" xml:space="preserve">
-    <value>Bottone di registrazione</value>
+    <value>Registrazione</value>
   </data>
   <data name="RelegationZone" xml:space="preserve">
     <value>Zona Retrocessione</value>
