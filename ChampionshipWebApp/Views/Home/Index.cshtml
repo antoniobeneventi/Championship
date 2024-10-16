@@ -139,7 +139,7 @@
                                 <option value="" disabled selected>@string.Format(Resources.SelectLanguage)</option>
                                 <option value="en">@string.Format(Resources.English)</option>
                                 <option value="it">@string.Format(Resources.Italian)</option>
-                                <option value="fr">@string.Format(Resources.French)</option> <!-- Aggiungi questa linea -->
+                                <option value="fr">@string.Format(Resources.French)</option>
 
                             </select>
                         </div>
@@ -344,11 +344,116 @@
         }
 
         function resetEditForm() {
-            $('#editForm')[0].reset();
+            // Cancella i campi tranne il nome della squadra
+            document.getElementById("EditFondationYear").value = '';
+            document.getElementById("EditCity").value = '';
+            document.getElementById("EditColorOfClub").value = '';
+            document.getElementById("EditStadiumName").value = '';
         }
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
