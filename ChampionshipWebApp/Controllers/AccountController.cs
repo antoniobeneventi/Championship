@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Security.Claims;
+using System.Resources;
+using System.Text.Json;
+
 
 public class AccountController : Controller
 {
@@ -18,93 +21,111 @@ public class AccountController : Controller
         _context = context;
     }
 
+
+
     public List<Language> GetLanguages()
     {
         return new List<Language>
         {
             new Language { Code = "en", Name = "English" },
             new Language { Code = "it", Name = "Italiano" },
-            new Language { Code = "fr", Name = "Français" } 
+            new Language { Code = "fr", Name = "Français" }
         };
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Login(string registrationSuccessMessage = null)
+    private void SetCultureCookie(string language)
     {
-        if (TempData["RegistrationSuccessMessage"] != null)
+        Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language))
+        );
+    }
+
+    private IDictionary<string, ResxForLanguage[]> PopulateResxLanguages()
+    {
+        Dictionary<string, ResxForLanguage[]> resx = new();
+        var languages = GetLanguages();
+        var resManager = new ResourceManager("ChampionshipWebApp.Resources.index", typeof(Resources).Assembly);
+
+        foreach (var lang in languages)
         {
-            ViewBag.RegistrationSuccessMessage = TempData["RegistrationSuccessMessage"];
-        }
-        else
-        {
-            ViewBag.RegistrationSuccessMessage = registrationSuccessMessage;
+            var culture = CultureInfo.GetCultureInfo(lang.Code);
+
+            ResxForLanguage[] resourcesArray = new ResxForLanguage[]
+            {
+            new ResxForLanguage { ElementName = "SelectLanguage", ElementValue = resManager.GetString("SelectLanguage", culture) },
+            new ResxForLanguage { ElementName = "LoginTitle", ElementValue = resManager.GetString("LoginTitle", culture) },
+            new ResxForLanguage { ElementName = "UsernameLabel", ElementValue = resManager.GetString("UsernameLabel", culture) },
+            new ResxForLanguage { ElementName = "InsertUsername", ElementValue = resManager.GetString("InsertUsername", culture) },
+            new ResxForLanguage { ElementName = "InsertPassword", ElementValue = resManager.GetString("InsertPassword", culture) },
+            new ResxForLanguage { ElementName = "PasswordLabel", ElementValue = resManager.GetString("PasswordLabel", culture) },
+            new ResxForLanguage { ElementName = "LoginButton", ElementValue = resManager.GetString("LoginButton", culture) },
+            new ResxForLanguage { ElementName = "RegisterButton", ElementValue = resManager.GetString("RegisterButton", culture) },
+            new ResxForLanguage { ElementName = "InvalidCredentialsMessage", ElementValue = resManager.GetString("InvalidCredentialsMessage", culture) },
+            new ResxForLanguage { ElementName = "UsernameInUse", ElementValue = resManager.GetString("UsernameInUse", culture) }
+            };
+
+           
+
+            // Aggiungiamo la lingua e l'array serializzato al dizionario
+            resx.Add(lang.Code, resourcesArray);
         }
 
-        var currentCulture = HttpContext.Request.Query["culture"].ToString();
+        return resx;
+    }
 
-        ViewData["Culture"] = currentCulture; 
+   [HttpGet]
+    public async Task<IActionResult> Login(string? registrationSuccessMessage = null)
+    {
+        ViewBag.RegistrationSuccessMessage = TempData["RegistrationSuccessMessage"] ?? registrationSuccessMessage;
+
+        var currentCulture = Request.Cookies["Culture"] ?? "en";
+        ViewData["Culture"] = currentCulture;
         ViewData["Languages"] = GetLanguages();
         ViewBag.Languages = GetLanguages();
 
-        if (!string.IsNullOrEmpty(currentCulture))
+        var resxLanguages = PopulateResxLanguages();
+        ViewBag.ResxLanguages = JsonSerializer.Serialize(resxLanguages);
+
+        if (string.IsNullOrEmpty(Request.Cookies["Culture"]))
         {
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(currentCulture))
-            );
+            SetCultureCookie(currentCulture);
         }
 
         return View();
     }
 
+
     [HttpPost]
     public async Task<IActionResult> ChangeLanguage(string language)
     {
-        if (language == "en" || language == "it" || language == "fr")
+        if (GetLanguages().Any(l => l.Code == language))
         {
             var identity = (ClaimsIdentity)User.Identity;
             var claim = identity.FindFirst("Language");
-
             if (claim != null)
             {
                 identity.RemoveClaim(claim);
             }
-
             identity.AddClaim(new Claim("Language", language));
+            await UpdateUserLanguageInDatabase(User.Identity.Name, language);
 
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-
-            var username = User.Identity.Name;
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user != null)
-            {
-                user.Language = language;
-                await _context.SaveChangesAsync();
-            }
-
-            // Set the cookie to the new language
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language))
-            );
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+            SetCultureCookie(language);
         }
 
         return RedirectToAction("Index", "Home");
     }
 
-    [HttpPost]
-    public IActionResult ChangeLanguageOnLogin(string language)
-    {
-        if (language == "en" || language == "it" || language == "fr")
-        {
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language))
-            );
-        }
 
-        return RedirectToAction("Login");
+    private async Task UpdateUserLanguageInDatabase(string username, string language)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user != null)
+        {
+            user.Language = language;
+            await _context.SaveChangesAsync();
+        }
     }
 
     [HttpPost]
@@ -116,41 +137,18 @@ public class AccountController : Controller
         }
         else
         {
-            var user = await _context.Users
-                                     .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
 
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                var userPreferredCulture = user.Language; // Use user language preference, which could be null
-                if (!string.IsNullOrEmpty(userPreferredCulture))
-                {
-                    var cultureInfo = new CultureInfo(userPreferredCulture);
-                    CultureInfo.CurrentCulture = cultureInfo;
-                    CultureInfo.CurrentUICulture = cultureInfo;
-
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.Username),
-                        new Claim("Language", userPreferredCulture)
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                }
+                var userPreferredCulture = user.Language ?? "en";
+                SetUserCulture(userPreferredCulture, user.Username);
 
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                // Show error message based on user preferred language
-                string errorMessage = user?.Language switch
-                {
-                    "it" => "Tentativo di login non valido.",
-                    "fr" => "Tentative de connexion invalide.",
-                    _ => "Invalid login attempt."
-                };
-
-                ModelState.AddModelError(string.Empty, errorMessage);
+                ModelState.AddModelError(string.Empty, GetLocalizedErrorMessage(user?.Language, "Invalid login attempt."));
             }
         }
 
@@ -158,6 +156,34 @@ public class AccountController : Controller
         ViewData["Languages"] = GetLanguages();
 
         return View();
+    }
+
+    private void SetUserCulture(string language, string username)
+    {
+        var cultureInfo = new CultureInfo(language);
+        CultureInfo.CurrentCulture = cultureInfo;
+        CultureInfo.CurrentUICulture = cultureInfo;
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim("Language", language)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
+
+        SetCultureCookie(language);
+    }
+
+    private string GetLocalizedErrorMessage(string language, string defaultMessage)
+    {
+        return language switch
+        {
+            "it" => "Tentativo di login non valido.",
+            "fr" => "Tentative de connexion invalide.",
+            _ => defaultMessage
+        };
     }
 
     [HttpPost]
@@ -172,50 +198,65 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var existingUser = await _context.Users
-                                             .FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
 
             if (existingUser != null)
             {
-                ViewData["Languages"] = GetLanguages();
-
-                string usernameInUseMessage = model.Language switch
-                {
-                    "it" => "Nome utente già in uso. Prova un altro.",
-                    "fr" => "Nom d'utilisateur déjà utilisé. Essayez un autre.",
-                    _ => "Username already in use. Try a different one."
-                };
-
+                string usernameInUseMessage = GetLocalizedErrorMessage(model.Language, "Username already in use. Try a different one.");
                 ViewBag.UsernameInUseMessage = usernameInUseMessage;
                 ViewBag.ShowRegisterModal = true;
+                ViewData["Languages"] = GetLanguages();
                 return View("Login");
+
             }
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             var user = new User
             {
                 Username = model.Username,
-                Password = hashedPassword,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Language = model.Language
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            string registrationSuccessMessage = model.Language switch
-            {
-                "it" => "Registrazione completata con successo!",
-                "fr" => "Inscription réussie!",
-                _ => "Registration completed successfully!"
-            };
-
-            TempData["RegistrationSuccessMessage"] = registrationSuccessMessage;
-
+            TempData["RegistrationSuccessMessage"] = GetLocalizedSuccessMessage(model.Language, "Registration completed successfully!");
             return RedirectToAction("Login", new { culture = model.Language });
         }
 
-        ViewData["Languages"] = GetLanguages();
         ViewBag.ShowRegisterModal = true;
+        ViewData["Languages"] = GetLanguages();
         return View("Login");
     }
+
+    private string GetLocalizedSuccessMessage(string language, string defaultMessage)
+    {
+        return language switch
+        {
+            "it" => "Registrazione completata con successo!",
+            "fr" => "Inscription réussie!",
+            _ => defaultMessage
+        };
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(string newPassword)
+    {
+       
+
+        var username = User.Identity.Name;
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+        if (user != null)
+        {
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+
+        }
+
+        return RedirectToAction("Login");
+    }
+
 }
+

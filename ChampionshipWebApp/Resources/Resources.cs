@@ -88,6 +88,7 @@ public static class Resources
 
     public static string InvalidLogin => GetString("InvalidLogin");
     public static string RegistrationSuccess => GetString("RegistrationSuccess");
+    public static string PasswordChangedSuccessfully => GetString("PasswordChangedSuccessfully");
 
     
 
