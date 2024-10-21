@@ -62,10 +62,22 @@ public class AccountController : Controller
             new ResxForLanguage { ElementName = "LoginButton", ElementValue = resManager.GetString("LoginButton", culture) },
             new ResxForLanguage { ElementName = "RegisterButton", ElementValue = resManager.GetString("RegisterButton", culture) },
             new ResxForLanguage { ElementName = "InvalidCredentialsMessage", ElementValue = resManager.GetString("InvalidCredentialsMessage", culture) },
-            new ResxForLanguage { ElementName = "UsernameInUse", ElementValue = resManager.GetString("UsernameInUse", culture) }
+            new ResxForLanguage { ElementName = "UsernameInUse", ElementValue = resManager.GetString("UsernameInUse", culture) },
+
+
+            new ResxForLanguage { ElementName = "RegisterTitleModal", ElementValue = resManager.GetString("RegisterTitleModal", culture) },
+            new ResxForLanguage { ElementName = "UsernameLabelRegister", ElementValue = resManager.GetString("UsernameLabelRegister", culture) },
+            new ResxForLanguage { ElementName = "PasswordLabelRegister", ElementValue = resManager.GetString("PasswordLabelRegister", culture) },
+            new ResxForLanguage { ElementName = "SelectLanguageRegister", ElementValue = resManager.GetString("SelectLanguageRegister", culture) },
+            new ResxForLanguage { ElementName = "RegisterButtonModal", ElementValue = resManager.GetString("RegisterButtonModal", culture) },
+            new ResxForLanguage { ElementName = "InsertUsernameRegister", ElementValue = resManager.GetString("InsertUsernameRegister", culture) },
+            new ResxForLanguage { ElementName = "InsertPasswordRegister", ElementValue = resManager.GetString("InsertPasswordRegister", culture) },
+
+            
+
             };
 
-           
+
 
             // Aggiungiamo la lingua e l'array serializzato al dizionario
             resx.Add(lang.Code, resourcesArray);
@@ -74,13 +86,12 @@ public class AccountController : Controller
         return resx;
     }
 
-   [HttpGet]
-    public async Task<IActionResult> Login(string? registrationSuccessMessage = null)
+    [HttpGet]
+    public async Task<IActionResult> Login(string? registrationSuccessMessage = null, string culture = "en")
     {
         ViewBag.RegistrationSuccessMessage = TempData["RegistrationSuccessMessage"] ?? registrationSuccessMessage;
 
-        var currentCulture = Request.Cookies["Culture"] ?? "en";
-        ViewData["Culture"] = currentCulture;
+        ViewData["Culture"] = culture;
         ViewData["Languages"] = GetLanguages();
         ViewBag.Languages = GetLanguages();
 
@@ -89,12 +100,11 @@ public class AccountController : Controller
 
         if (string.IsNullOrEmpty(Request.Cookies["Culture"]))
         {
-            SetCultureCookie(currentCulture);
+            SetCultureCookie(culture);
         }
 
         return View();
     }
-
 
     [HttpPost]
     public async Task<IActionResult> ChangeLanguage(string language)
@@ -129,7 +139,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(string username, string password)
+    public async Task<IActionResult> Login(string username, string password, string culture)
     {
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
@@ -143,20 +153,23 @@ public class AccountController : Controller
             {
                 var userPreferredCulture = user.Language ?? "en";
                 SetUserCulture(userPreferredCulture, user.Username);
-
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                ModelState.AddModelError(string.Empty, GetLocalizedErrorMessage(user?.Language, "Invalid login attempt."));
+                ModelState.AddModelError(string.Empty, GetLocalizedErrorMessage(culture, "Invalid login attempt."));
             }
         }
 
+        // Ritorna la vista con i messaggi di errore tradotti
         ViewData["Username"] = username;
         ViewData["Languages"] = GetLanguages();
+        ViewData["Culture"] = culture; // Mantieni la cultura selezionata
+        ViewBag.ResxLanguages = JsonSerializer.Serialize(PopulateResxLanguages());
 
         return View();
     }
+
 
     private void SetUserCulture(string language, string username)
     {
@@ -202,12 +215,12 @@ public class AccountController : Controller
 
             if (existingUser != null)
             {
-                string usernameInUseMessage = GetLocalizedErrorMessage(model.Language, "Username already in use. Try a different one.");
+                // Traduci il messaggio di errore in base alla lingua selezionata
+                string usernameInUseMessage = GetLocalizedErrorRegisterMessage(model.Language, "Username already in use. Try a different one.");
                 ViewBag.UsernameInUseMessage = usernameInUseMessage;
                 ViewBag.ShowRegisterModal = true;
                 ViewData["Languages"] = GetLanguages();
                 return View("Login");
-
             }
 
             var user = new User
@@ -238,12 +251,20 @@ public class AccountController : Controller
             _ => defaultMessage
         };
     }
-
+    private string GetLocalizedErrorRegisterMessage(string language, string defaultMessage)
+    {
+        return language switch
+        {
+            "it" => "Nome utente già in uso. Prova con un altro.",
+            "fr" => "Nom d'utilisateur déjà utilisé. Essayez un autre.",
+            _ => defaultMessage
+        };
+    }
 
     [HttpPost]
     public async Task<IActionResult> ChangePassword(string newPassword)
     {
-       
+
 
         var username = User.Identity.Name;
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);

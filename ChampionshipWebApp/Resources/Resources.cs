@@ -90,9 +90,16 @@ public static class Resources
     public static string RegistrationSuccess => GetString("RegistrationSuccess");
     public static string PasswordChangedSuccessfully => GetString("PasswordChangedSuccessfully");
 
+    public static string UsernameLabelRegister => GetString("UsernameLabelRegister");
+    public static string PasswordLabelRegister => GetString("PasswordLabelRegister");
+    public static string RegisterTitleModal => GetString("RegisterTitleModal");
+    public static string SelectLanguageRegister => GetString("SelectLanguageRegister");
+    public static string RegisterButtonModal => GetString("RegisterButtonModal");
+    public static string InsertUsernameRegister => GetString("InsertUsernameRegister");
+    public static string InsertPasswordRegister => GetString("InsertPasswordRegister");
+
+
     
-
-
     private static string GetString(string name)
     {
         return ResourceManager.GetString(name, CultureInfo.CurrentUICulture);
