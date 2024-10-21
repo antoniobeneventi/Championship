@@ -334,7 +334,7 @@
     <value>Voir les classements</value>
   </data>
   <data name="WelcomeMessage" xml:space="preserve">
-    <value>Message de bienvenue</value>
+    <value>Bienvenue, {0} !</value>
   </data>
   <data name="Wins" xml:space="preserve">
     <value>Victoires</value>

@@ -209,38 +209,43 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
-
-            if (existingUser != null)
-            {
-                // Traduci il messaggio di errore in base alla lingua selezionata
-                string usernameInUseMessage = GetLocalizedErrorRegisterMessage(model.Language, "Username already in use. Try a different one.");
-                ViewBag.UsernameInUseMessage = usernameInUseMessage;
-                ViewBag.ShowRegisterModal = true;
-                ViewData["Languages"] = GetLanguages();
-                return View("Login");
-            }
-
-            var user = new User
-            {
-                Username = model.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                Language = model.Language
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            TempData["RegistrationSuccessMessage"] = GetLocalizedSuccessMessage(model.Language, "Registration completed successfully!");
-            return RedirectToAction("Login", new { culture = model.Language });
+            ViewBag.ShowRegisterModal = true;
+            ViewData["Languages"] = GetLanguages();
+            return View("Login");
         }
 
-        ViewBag.ShowRegisterModal = true;
-        ViewData["Languages"] = GetLanguages();
-        return View("Login");
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == model.Username.ToLower());
+
+        if (existingUser != null)
+        {
+            string usernameInUseMessage = GetLocalizedErrorRegisterMessage(model.Language, "Username already in use. Try a different one.");
+            ViewBag.UsernameInUseMessage = usernameInUseMessage;
+            ViewBag.ShowRegisterModal = true;
+            ViewData["Languages"] = GetLanguages();
+            ViewData["Culture"] = model.Language;
+            ViewBag.ResxLanguages = JsonSerializer.Serialize(PopulateResxLanguages());
+            return View("Login");
+        }
+
+        var user = new User
+        {
+            Username = model.Username,
+            Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+            Language = model.Language 
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        TempData["RegistrationSuccessMessage"] = GetLocalizedSuccessMessage(model.Language, "Registration completed successfully!");
+
+        return RedirectToAction("Login", new { culture = model.Language });
     }
+
+
+
 
     private string GetLocalizedSuccessMessage(string language, string defaultMessage)
     {

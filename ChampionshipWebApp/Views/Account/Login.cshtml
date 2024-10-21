@@ -88,6 +88,7 @@
             </div>
         }
 
+
         <form asp-action="Login" method="post">
             <input type="hidden" name="culture" value="@currentCulture" />
             <div class="form-group">
@@ -126,21 +127,21 @@
                 </div>
                 <div class="modal-body">
                     <form id="registrationForm" method="post" asp-action="Register">
-                        <input type="hidden" name="Language" value="@ViewData["Culture"]" />
 
                         <div class="form-group">
                             <label id="UsernameLabelRegister" for="newUsername">@Resources.UsernameLabelRegister</label>
-                            <input id="InsertUsernameRegister" type="text" id="newUsername" maxlength="30" name="Username" class="form-control" required placeholder="@Resources.InsertUsernameRegister">
+                            <input id="InsertUsernameRegister" type="text" maxlength="30" name="Username" class="form-control" required placeholder="@Resources.InsertUsernameRegister">
                         </div>
+
                         <div class="form-group">
+
                             <label id="PasswordLabelRegister" for="newPassword">@Resources.PasswordLabelRegister</label>
-                            <input id="InsertPasswordRegister" type="password" id="newPassword" maxlength="30" name="Password" class="form-control" required placeholder="@Resources.InsertPasswordRegister">
-                            <div class="invalid-feedback">@Resources.NoSpace</div>
+                            <input id="InsertPasswordRegister" type="password" maxlength="30" name="Password" class="form-control" required placeholder="@Resources.InsertPasswordRegister">
                         </div>
 
                         <div class="form-group">
                             <label id="SelectLanguageRegister" for="newLanguage">@Resources.SelectLanguageRegister</label>
-                            <select id="newLanguage" name="Language" class="form-control">
+                            <select id="newLanguage" name="Language" class="form-control" required>
                                 @foreach (var language in languages)
                                 {
                                     <option value="@language.Code">@language.Name</option>
@@ -148,8 +149,9 @@
                             </select>
                         </div>
 
-                        <button id="RegisterButtonModal" type="submit" class="btn btn-primary" id="registerButton">@Resources.RegisterButtonModal</button>
+                        <button id="RegisterButtonModal" type="submit" class="btn btn-primary">@Resources.RegisterButtonModal</button>
                     </form>
+
 
                     @if (!string.IsNullOrEmpty(ViewBag.RegistrationError))
                     {
@@ -159,6 +161,7 @@
                     {
                         <div class="text-danger mt-2" id="UsernameInUse">@ViewBag.UsernameInUseMessage</div>
                     }
+
                 </div>
             </div>
         </div>
@@ -220,6 +223,9 @@
                 $('#usernameInUseMessage').text('');
                 $('#newPassword').removeClass('is-invalid');
                 $('#registerButton').prop('disabled', false);
+
+                // Redirect to the login page when the modal is closed
+                window.location.href = '@Url.Action("Login", "Account")';
             });
 
             // Controllo della validità della password durante l'inserimento
