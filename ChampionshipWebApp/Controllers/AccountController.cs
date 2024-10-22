@@ -11,7 +11,6 @@ using System.Security.Claims;
 using System.Resources;
 using System.Text.Json;
 
-
 public class AccountController : Controller
 {
     private readonly FootballLeagueContext _context;
@@ -20,9 +19,6 @@ public class AccountController : Controller
     {
         _context = context;
     }
-
-
-
     public List<Language> GetLanguages()
     {
         return new List<Language>
@@ -32,7 +28,6 @@ public class AccountController : Controller
             new Language { Code = "fr", Name = "Français" }
         };
     }
-
     private void SetCultureCookie(string language)
     {
         Response.Cookies.Append(
@@ -40,7 +35,6 @@ public class AccountController : Controller
             CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language))
         );
     }
-
     private IDictionary<string, ResxForLanguage[]> PopulateResxLanguages()
     {
         Dictionary<string, ResxForLanguage[]> resx = new();
@@ -64,7 +58,6 @@ public class AccountController : Controller
             new ResxForLanguage { ElementName = "InvalidCredentialsMessage", ElementValue = resManager.GetString("InvalidCredentialsMessage", culture) },
             new ResxForLanguage { ElementName = "UsernameInUse", ElementValue = resManager.GetString("UsernameInUse", culture) },
 
-
             new ResxForLanguage { ElementName = "RegisterTitleModal", ElementValue = resManager.GetString("RegisterTitleModal", culture) },
             new ResxForLanguage { ElementName = "UsernameLabelRegister", ElementValue = resManager.GetString("UsernameLabelRegister", culture) },
             new ResxForLanguage { ElementName = "PasswordLabelRegister", ElementValue = resManager.GetString("PasswordLabelRegister", culture) },
@@ -73,16 +66,9 @@ public class AccountController : Controller
             new ResxForLanguage { ElementName = "InsertUsernameRegister", ElementValue = resManager.GetString("InsertUsernameRegister", culture) },
             new ResxForLanguage { ElementName = "InsertPasswordRegister", ElementValue = resManager.GetString("InsertPasswordRegister", culture) },
 
-            
-
-            };
-
-
-
-            // Aggiungiamo la lingua e l'array serializzato al dizionario
+        };
             resx.Add(lang.Code, resourcesArray);
         }
-
         return resx;
     }
 
@@ -102,7 +88,6 @@ public class AccountController : Controller
         {
             SetCultureCookie(culture);
         }
-
         return View();
     }
 
@@ -126,8 +111,6 @@ public class AccountController : Controller
 
         return RedirectToAction("Index", "Home");
     }
-
-
     private async Task UpdateUserLanguageInDatabase(string username, string language)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
@@ -161,10 +144,9 @@ public class AccountController : Controller
             }
         }
 
-        // Ritorna la vista con i messaggi di errore tradotti
         ViewData["Username"] = username;
         ViewData["Languages"] = GetLanguages();
-        ViewData["Culture"] = culture; // Mantieni la cultura selezionata
+        ViewData["Culture"] = culture; 
         ViewBag.ResxLanguages = JsonSerializer.Serialize(PopulateResxLanguages());
 
         return View();
@@ -233,7 +215,7 @@ public class AccountController : Controller
         {
             Username = model.Username,
             Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
-            Language = model.Language 
+            Language = model.Language
         };
 
         _context.Users.Add(user);

@@ -144,7 +144,7 @@
 
                         <div class="form-group">
                             <label for="newPassword">@string.Format(Resources.NewPassword)</label>
-                            <input type="password" maxlength="20" pattern="[^ ]+" title="Non sono ammessi spazi" class="form-control" id="newPassword" name="newPassword" placeholder="@string.Format(Resources.EnterNewPassword)"  />
+                            <input type="password" maxlength="20" pattern="[^ ]+"  class="form-control" id="newPassword" name="newPassword" placeholder="@string.Format(Resources.EnterNewPassword)"  />
                         </div>
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">@string.Format(Resources.CancelButton)</button>
@@ -254,15 +254,15 @@
                         </div>
                         <div class="form-group">
                             <label for="EditCity">@string.Format(Resources.City)</label>
-                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
+                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
                         </div>
                         <div class="form-group">
                             <label for="EditColorOfClub">@string.Format(Resources.ColorOfClub)</label>
-                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="40" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="40" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
                         </div>
                         <div class="form-group">
                             <label for="EditStadiumName">@string.Format(Resources.StadiumName)</label>
-                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
                         </div>
                         <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="resetEditForm()">@string.Format(Resources.DeleteChanges)</button>
                         <button type="submit" class="btn btn-primary">@string.Format(Resources.SaveChanges)</button>
@@ -271,7 +271,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Modal per la cancellazione -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -282,7 +281,6 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-
                 </div>
                 <div class="modal-body">
                     <p>@string.Format(Resources.DeleteMessage)</p>
@@ -316,10 +314,7 @@
                     // Ricarica la pagina per i cambiamenti
                     location.reload();
                 },
-                error: function (error) {
-                    console.error("Error:", error);
-                    alert('Errore durante il cambio password.');
-                }
+                
             });
         });
 
@@ -327,14 +322,13 @@
             $('#languageForm').on('submit', function (e) {
                 e.preventDefault();
                 var selectedLanguage = $('#languageSelect').val();
-                var newPassword = $('#newPassword').val(); // Aggiungi questa linea
+                var newPassword = $('#newPassword').val(); 
 
                 $.ajax({
                     type: 'POST',
                     url: '/Account/ChangeLanguage', // endpoint da creare nel controller
-                    data: { language: selectedLanguage, newPassword: newPassword }, // Includi la nuova password nei dati
+                    data: { language: selectedLanguage, newPassword: newPassword }, 
                     success: function (response) {
-                        // Ricarica la pagina per  i cambiamenti
                         location.reload();
                     },
                     error: function (error) {

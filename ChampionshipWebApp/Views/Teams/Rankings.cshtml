@@ -90,9 +90,9 @@
             }
             @foreach (var ranking in Model)
             {
-                var rowClass = rank <= 3 ? "blue-row"
-                : rank == 4 || rank == 5 ? "orange-row"
-                : rank == 6 ? "green-row"
+                var rowClass = rank <= 4 ? "blue-row"
+                : rank == 5 || rank == 6 ? "orange-row"
+                : rank == 7 ? "green-row"
                 : rank > totalTeams - 3 ? "red-row"
                 : "";
 

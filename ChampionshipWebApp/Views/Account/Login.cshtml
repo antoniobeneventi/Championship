@@ -69,12 +69,8 @@
                                 </button>
                             }
                         </div>
-
                     </div>
                 </div>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
             </div>
         </nav>
     </header>
@@ -87,7 +83,6 @@
                 @TempData["RegistrationSuccessMessage"]
             </div>
         }
-
 
         <form asp-action="Login" method="post">
             <input type="hidden" name="culture" value="@currentCulture" />
@@ -107,8 +102,6 @@
                 </button>
             </div>
         </form>
-
-        
 
         @if (!ViewData.ModelState.IsValid)
         {
@@ -176,7 +169,6 @@
             var resxLanguages = JSON.parse('@Html.Raw(ViewBag.ResxLanguages)');
             var userLanguage = '@ViewData["Culture"]';
 
-            // Funzione per aggiornare i testi in base alla lingua selezionata
             function updateLanguage(language) {
                 if (resxLanguages[language]) {
                     var localizedResources = resxLanguages[language];
@@ -192,20 +184,17 @@
                         }
                     });
 
-                    // Aggiorna il cookie 'Culture' per mantenere la lingua scelta anche nei prossimi refresh della pagina
                     document.cookie = "Culture=" + language + "; path=/";
                 }
             }
 
-            // Inizializza la lingua corrente
             updateLanguage(userLanguage);
 
             // Cambia la lingua al click del bottone
             document.querySelectorAll('.change-language').forEach(function (button) {
                 button.addEventListener('click', function () {
                     var selectedLanguage = this.getAttribute('data-language');
-                    // Ricarica la pagina con la lingua selezionata
-                    window.location.href = '?culture=' + selectedLanguage; // Ricarica la pagina con la nuova lingua
+                    window.location.href = '?culture=' + selectedLanguage;
                 });
             });
         });
@@ -231,7 +220,9 @@
             // Controllo della validità della password durante l'inserimento
             $('#newPassword').on('input', function () {
                 var password = $(this).val();
-                if (/\s/.test(password)) {
+
+                // Controllo che la password non contenga solo spazi o sia vuota
+                if (password.trim() === "" || /\s/.test(password)) {
                     $(this).addClass('is-invalid');
                     $('#registerButton').prop('disabled', true);
                 } else {
