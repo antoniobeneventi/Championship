@@ -97,8 +97,6 @@ public static class Resources
     public static string InsertUsernameRegister => GetString("InsertUsernameRegister");
     public static string InsertPasswordRegister => GetString("InsertPasswordRegister");
 
-
-    
     private static string GetString(string name)
     {
         return ResourceManager.GetString(name, CultureInfo.CurrentUICulture);

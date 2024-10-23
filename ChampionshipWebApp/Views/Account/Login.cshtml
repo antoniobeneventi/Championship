@@ -169,6 +169,7 @@
             var resxLanguages = JSON.parse('@Html.Raw(ViewBag.ResxLanguages)');
             var userLanguage = '@ViewData["Culture"]';
 
+            // Funzione per aggiornare i testi in base alla lingua selezionata
             function updateLanguage(language) {
                 if (resxLanguages[language]) {
                     var localizedResources = resxLanguages[language];
@@ -183,25 +184,26 @@
                             }
                         }
                     });
-
                     document.cookie = "Culture=" + language + "; path=/";
                 }
             }
 
+            // Inizializza la lingua corrente
             updateLanguage(userLanguage);
 
-            // Cambia la lingua al click del bottone
+            // Cambia la lingua al click del bottone lato client
             document.querySelectorAll('.change-language').forEach(function (button) {
                 button.addEventListener('click', function () {
                     var selectedLanguage = this.getAttribute('data-language');
-                    window.location.href = '?culture=' + selectedLanguage;
+                    // Aggiorna il testo con la lingua selezionata
+                    updateLanguage(selectedLanguage);
                 });
             });
         });
 
-
         $(document).ready(function () {
             var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
+
             if (showRegisterModal === 'True') {
                 $('#registerModal').modal('show');
             }
@@ -212,17 +214,13 @@
                 $('#usernameInUseMessage').text('');
                 $('#newPassword').removeClass('is-invalid');
                 $('#registerButton').prop('disabled', false);
-
-                // Redirect to the login page when the modal is closed
-                window.location.href = '@Url.Action("Login", "Account")';
+                window.location.href = '@Url.Action("login", "Account")';
             });
 
             // Controllo della validità della password durante l'inserimento
             $('#newPassword').on('input', function () {
                 var password = $(this).val();
-
-                // Controllo che la password non contenga solo spazi o sia vuota
-                if (password.trim() === "" || /\s/.test(password)) {
+                if (/\s/.test(password)) {
                     $(this).addClass('is-invalid');
                     $('#registerButton').prop('disabled', true);
                 } else {
@@ -232,5 +230,6 @@
             });
         });
     </script>
+
 </body>
 </html>

@@ -117,15 +117,13 @@
     </style>
 </head>
 
-
 <body>
-
     <!-- Modale per la modifica della lingua e della password -->
     <div class="modal fade" id="languageModal" tabindex="-1" role="dialog" aria-labelledby="languageModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="languageModalLabel">@string.Format(Resources.LoginTitle)</h5>
+                    <h5 class="modal-title" id="languageModalLabel">@string.Format(Resources.EditAccount)</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -134,7 +132,7 @@
                     <form id="languageForm">
                         <div class="form-group">
                             <label for="languageSelect">@string.Format(Resources.SelectLanguage)</label>
-                            <select class="form-control" id="languageSelect" name="language" >
+                            <select class="form-control" id="languageSelect" name="language">
                                 <option value="" disabled selected>@string.Format(Resources.SelectLanguage)</option>
                                 <option value="en">@string.Format(Resources.English)</option>
                                 <option value="it">@string.Format(Resources.Italian)</option>
@@ -144,7 +142,7 @@
 
                         <div class="form-group">
                             <label for="newPassword">@string.Format(Resources.NewPassword)</label>
-                            <input type="password" maxlength="20" pattern="[^ ]+"  class="form-control" id="newPassword" name="newPassword" placeholder="@string.Format(Resources.EnterNewPassword)"  />
+                            <input type="password" maxlength="20" pattern="[^ ]+" class="form-control" id="newPassword" name="newPassword" placeholder="@string.Format(Resources.EnterNewPassword)" />
                         </div>
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">@string.Format(Resources.CancelButton)</button>
@@ -154,7 +152,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
@@ -250,19 +247,19 @@
                         </div>
                         <div class="form-group">
                             <label for="EditFondationYear">@string.Format(Resources.FoundationYear)</label>
-                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" required max="@DateTime.Now.Year" />
+                            <input type="number" class="form-control" id="EditFondationYear" name="FondationYear" min="1857" required max="@DateTime.Now.Year" />
                         </div>
                         <div class="form-group">
                             <label for="EditCity">@string.Format(Resources.City)</label>
-                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
+                            <input type="text" class="form-control" id="EditCity" name="City" maxlength="20" pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
                         <div class="form-group">
                             <label for="EditColorOfClub">@string.Format(Resources.ColorOfClub)</label>
-                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="40" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
+                            <input type="text" class="form-control" id="EditColorOfClub" name="ColorOfClub" maxlength="40" pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
                         <div class="form-group">
                             <label for="EditStadiumName">@string.Format(Resources.StadiumName)</label>
-                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" required pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$"/>
+                            <input type="text" class="form-control" id="EditStadiumName" name="StadiumName" maxlength="20" pattern="^(?! )[a-zA-Z0-9]+( [a-zA-Z0-9]+)*(?<! )$" required />
                         </div>
                         <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="resetEditForm()">@string.Format(Resources.DeleteChanges)</button>
                         <button type="submit" class="btn btn-primary">@string.Format(Resources.SaveChanges)</button>
@@ -314,7 +311,7 @@
                     // Ricarica la pagina per i cambiamenti
                     location.reload();
                 },
-                
+
             });
         });
 
@@ -322,12 +319,12 @@
             $('#languageForm').on('submit', function (e) {
                 e.preventDefault();
                 var selectedLanguage = $('#languageSelect').val();
-                var newPassword = $('#newPassword').val(); 
+                var newPassword = $('#newPassword').val();
 
                 $.ajax({
                     type: 'POST',
                     url: '/Account/ChangeLanguage', // endpoint da creare nel controller
-                    data: { language: selectedLanguage, newPassword: newPassword }, 
+                    data: { language: selectedLanguage, newPassword: newPassword },
                     success: function (response) {
                         location.reload();
                     },
@@ -338,7 +335,6 @@
                 });
             });
         });
-
 
         function openEditModal(id, name, year, city, color, stadium) {
             $('#EditTeamId').val(id);
@@ -351,12 +347,11 @@
         }
 
         function openDeleteModal(id) {
-            $('#confirmDeleteTeamId').val(id);  // Usa l'ID della squadra
+            $('#confirmDeleteTeamId').val(id);  
             $('#deleteModal').modal('show');
         }
 
         function resetEditForm() {
-            // Cancella i campi tranne il nome della squadra
             document.getElementById("EditFondationYear").value = '';
             document.getElementById("EditCity").value = '';
             document.getElementById("EditColorOfClub").value = '';

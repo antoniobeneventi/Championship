@@ -66,7 +66,7 @@ public class AccountController : Controller
             new ResxForLanguage { ElementName = "InsertUsernameRegister", ElementValue = resManager.GetString("InsertUsernameRegister", culture) },
             new ResxForLanguage { ElementName = "InsertPasswordRegister", ElementValue = resManager.GetString("InsertPasswordRegister", culture) },
 
-        };
+            };
             resx.Add(lang.Code, resourcesArray);
         }
         return resx;
@@ -146,13 +146,11 @@ public class AccountController : Controller
 
         ViewData["Username"] = username;
         ViewData["Languages"] = GetLanguages();
-        ViewData["Culture"] = culture; 
+        ViewData["Culture"] = culture;
         ViewBag.ResxLanguages = JsonSerializer.Serialize(PopulateResxLanguages());
 
         return View();
     }
-
-
     private void SetUserCulture(string language, string username)
     {
         var cultureInfo = new CultureInfo(language);
@@ -225,10 +223,6 @@ public class AccountController : Controller
 
         return RedirectToAction("Login", new { culture = model.Language });
     }
-
-
-
-
     private string GetLocalizedSuccessMessage(string language, string defaultMessage)
     {
         return language switch
@@ -251,8 +245,6 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangePassword(string newPassword)
     {
-
-
         var username = User.Identity.Name;
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
@@ -260,11 +252,8 @@ public class AccountController : Controller
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             await _context.SaveChangesAsync();
-
         }
-
         return RedirectToAction("Login");
     }
-
 }
 
