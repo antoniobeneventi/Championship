@@ -85,14 +85,14 @@
         }
 
         <form asp-action="Login" method="post">
-            <input type="hidden" name="culture" value="@currentCulture" />
+            <input type="hidden" name="culture" value="@currentCulture"/>
             <div class="form-group">
                 <label id="UsernameLabel" asp-for="Username" class="form-label">@Resources.UsernameLabel</label>
-                <input id="InsertUsername" asp-for="Username" maxlength="30" class="form-control" value="@ViewData["Username"]" placeholder="@Resources.InsertUsername" />
+                <input id="InsertUsername" asp-for="Username" maxlength="30" class="form-control" required value="@ViewData["Username"]" placeholder="@Resources.InsertUsername"/>
             </div>
             <div class="form-group">
                 <label id="PasswordLabel" asp-for="Password" class="form-label">@Resources.PasswordLabel</label>
-                <input id="InsertPassword" asp-for="Password" maxlength="30" type="password" class="form-control" placeholder="@Resources.InsertPassword" />
+                <input id="InsertPassword" asp-for="Password" maxlength="30" type="password" required class="form-control" placeholder="@Resources.InsertPassword"/>
             </div>
 
             <div class="d-flex justify-content-between">
@@ -144,7 +144,6 @@
 
                         <button id="RegisterButtonModal" type="submit" class="btn btn-primary">@Resources.RegisterButtonModal</button>
                     </form>
-
 
                     @if (!string.IsNullOrEmpty(ViewBag.RegistrationError))
                     {
@@ -202,8 +201,9 @@
         });
 
         $(document).ready(function () {
-            var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
 
+
+            var showRegisterModal = '@(ViewBag.ShowRegisterModal != null && (bool)ViewBag.ShowRegisterModal)';
             if (showRegisterModal === 'True') {
                 $('#registerModal').modal('show');
             }
@@ -228,6 +228,14 @@
                     $('#registerButton').prop('disabled', false);
                 }
             });
+        });
+        $(document).ready(function () {
+            var successMessage = $('#success-message');
+            if (successMessage.length) {
+                setTimeout(function () {
+                    successMessage.fadeOut('slow');
+                }, 3000);
+            }
         });
     </script>
 
